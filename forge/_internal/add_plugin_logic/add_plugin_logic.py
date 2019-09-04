@@ -1,10 +1,12 @@
 import argparse
-from ..plugin_puller.PluginPuller import PluginPuller
+from ..plugin_puller import PluginPuller
 from colorama import init, deinit, Fore
 import sys
 from multiprocessing import Process
 import itertools
 from git import GitCommandError
+import re
+
 
 class AddPlugin:
     def __init__(self):
@@ -12,12 +14,16 @@ class AddPlugin:
 
     def execute(self, args):
         parsed_args = self.arg_parser.parse_args(args)
-        print("Pulling plugin source...")
         p = Process(target=self.show_spinner)
         p.start()
 
+        name = self.pull_name_from_url(parsed_args.repo_url)
+        if name is None:
+            self.handle_error('Repository name should be in the form of forge-[alphanumeric name]', p)
+
+        print("Pulling plugin source...")
         try:
-            repo = self.pull_plugin(parsed_args)
+            repo = self.pull_plugin(parsed_args.repo_url, name)
             if repo.bare:
                 self.handle_error('Plugin repository contained no source code...', p)
         except GitCommandError as err:
@@ -29,13 +35,10 @@ class AddPlugin:
         print(Fore.GREEN + '\n' + 'Plugin ready for use!')
 
 
-
     def init_arg_parser(self):
         parser = argparse.ArgumentParser(prog='forge add-plugin')
         parser.add_argument('-p', '--plugin', action='store', dest='repo_url', required=True,
                             help='Url to git repo containing plugin source.')
-        parser.add_argument('-n', '--name', action='store', dest='plugin_name', required=True,
-                            help='Name of the plugin you are adding')
         return parser
 
     def handle_error(self, message, spinner):
@@ -45,8 +48,8 @@ class AddPlugin:
         deinit()
         sys.exit(1)
 
-    def pull_plugin(self, parsed_args):
-        return PluginPuller.clone_plugin(parsed_args.repo_url, parsed_args.plugin_name), False
+    def pull_plugin(self, url, name):
+        return PluginPuller.clone_plugin(url, name)
 
     def show_spinner(self):
         spinner = itertools.cycle('-/|\\')
@@ -54,3 +57,13 @@ class AddPlugin:
             sys.stdout.write(next(spinner))
             sys.stdout.flush()
             sys.stdout.write('\b')
+
+    def pull_name_from_url(self, url):
+        match = re.search('[\s]*\/(forge-[A-Za-z1-9]+)[\s]*', url)
+
+        if match:
+            return match.group(1)
+        else:
+            return None
+
+

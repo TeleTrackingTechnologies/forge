@@ -11,6 +11,7 @@ test: init lint
 
 install:
 	rm -rf ~/.plugins
-	cp -r _internal/ /usr/local/etc/plugins
+	mkdir -p /usr/local/etc/forge/plugins
+	cp -r _internal/ /usr/local/etc/forge/plugins
 	pip3 install -Ur requirements.txt
 	cd ../; pip3 install .

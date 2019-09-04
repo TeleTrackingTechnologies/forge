@@ -16,7 +16,7 @@ class Application(object):
         self.registry = {}
 
         self.plugin_source = plugin_base.make_plugin_source(
-            searchpath=['/usr/local/etc/plugins'],
+            searchpath=['/usr/local/etc/forge/plugins'],
             identifier=self.name)
 
         for plugin_name in self.plugin_source.list_plugins():
