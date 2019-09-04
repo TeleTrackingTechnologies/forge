@@ -1,11 +1,12 @@
 import argparse
-from ..plugin_puller.PluginPuller import PluginPuller
 from colorama import init, deinit, Fore
 import sys
 from multiprocessing import Process
 import itertools
 from git import GitCommandError
 import re
+from .plugin_puller import PluginPuller
+import configparser
 
 
 class AddPlugin:
@@ -67,3 +68,5 @@ class AddPlugin:
             return None
 
 
+    def write_plugin_to_ini(self):
+        

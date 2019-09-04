@@ -1,4 +1,4 @@
-from .add_plugin_logic.add_plugin_logic import AddPlugin
+from .manage_plugins_logic.manage_plugins import AddPlugin
 
 def execute(args):
     add_plugin = AddPlugin()
