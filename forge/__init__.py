@@ -16,11 +16,11 @@ class Application(object):
 
         self.registry = {}
 
-        plugins = self.parse_conf('/usr/local/etc/forge/', 'conf.ini')
-        plugins.append('/usr/local/etc/forge/plugins/manage_plugins')
-        print(plugins)
+        self.plugins = []
+        self.parse_conf('/usr/local/etc/forge/', 'conf.ini')
+        self.plugins.append('/usr/local/etc/forge/plugins/manage_plugins')
         self.plugin_source = plugin_base.make_plugin_source(
-            searchpath=plugins,
+            searchpath=self.plugins,
             identifier=self.name)
 
         for plugin_name in self.plugin_source.list_plugins():
@@ -48,10 +48,8 @@ class Application(object):
         try:
             config = configparser.ConfigParser()
             config.read(forge_dir + conf_file)
-            plugins_list = []
             for key in config['plugin-definitions']:
-                plugins_list.append(forge_dir + 'plugins/' + key)
-            return plugins_list
+                self.plugins.append(forge_dir + 'plugins/' + key)
         except:
             # TODO: improve error handling
             print('config parse failed')
@@ -59,7 +57,7 @@ class Application(object):
 
 
 def main(args):
-    print("Forge\n")
+    print("forge\n")
     if len(args) > 1:
         Application('forge').execute(args[0], args[1:])
     else:
