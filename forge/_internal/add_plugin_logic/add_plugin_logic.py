@@ -4,6 +4,7 @@ from colorama import init, deinit, Fore
 import sys
 from multiprocessing import Process
 import itertools
+from git import GitCommandError
 
 class AddPlugin:
     def __init__(self):
@@ -19,8 +20,8 @@ class AddPlugin:
             repo = self.pull_plugin(parsed_args)
             if repo.bare:
                 self.handle_error('Plugin repository contained no source code...', p)
-        # except:
-        #     self.handle_error('Could not pull plugin...', p)
+        except GitCommandError as err:
+            self.handle_error(f'Could not pull plugin {err}', p)
 
         print(Fore.GREEN + '\n' + "Pulled plugin source, configuring for use...")
 
@@ -45,7 +46,7 @@ class AddPlugin:
         sys.exit(1)
 
     def pull_plugin(self, parsed_args):
-        return PluginPuller.pull_plugin(parsed_args.repo_url, parsed_args.plugin_name), False
+        return PluginPuller.clone_plugin(parsed_args.repo_url, parsed_args.plugin_name), False
 
     def show_spinner(self):
         spinner = itertools.cycle('-/|\\')
