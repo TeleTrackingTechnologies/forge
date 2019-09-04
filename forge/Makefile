@@ -10,7 +10,6 @@ test: init lint
 	coverage report -m *.py;
 
 install:
-	rm -rf ~/.plugins
 	mkdir -p /usr/local/etc/forge/plugins
 	cp -r _internal/ /usr/local/etc/forge/plugins
 	pip3 install -Ur requirements.txt

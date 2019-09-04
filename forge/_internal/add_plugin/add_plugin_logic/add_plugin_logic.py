@@ -1,5 +1,5 @@
 import argparse
-from ..plugin_puller import PluginPuller
+from ..plugin_puller.PluginPuller import PluginPuller
 from colorama import init, deinit, Fore
 import sys
 from multiprocessing import Process

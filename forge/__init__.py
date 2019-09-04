@@ -1,6 +1,7 @@
 #! /usr/bin/env python3
 
 import sys
+import configparser
 from pluginbase import PluginBase
 from pathlib import Path
 from tabulate import tabulate
@@ -15,8 +16,11 @@ class Application(object):
 
         self.registry = {}
 
+        plugins = self.parse_conf('/usr/local/etc/forge/', 'conf.ini')
+        plugins.append('/usr/local/etc/forge/plugins/add_plugin')
+        print(plugins)
         self.plugin_source = plugin_base.make_plugin_source(
-            searchpath=['/usr/local/etc/forge/plugins'],
+            searchpath=plugins,
             identifier=self.name)
 
         for plugin_name in self.plugin_source.list_plugins():
@@ -39,6 +43,19 @@ class Application(object):
             self.print_help()
         else:
             self.registry[command][0](args)
+
+    def parse_conf(self, forge_dir, conf_file):
+        try:
+            config = configparser.ConfigParser()
+            config.read(forge_dir + conf_file)
+            plugins_list = []
+            for key in config['plugin-definitions']:
+                plugins_list.append(forge_dir + 'plugins/' + key)
+            return plugins_list
+        except:
+            # TODO: improve error handling
+            print('config parse failed')
+
 
 
 def main(args):
