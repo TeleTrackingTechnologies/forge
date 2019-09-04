@@ -1,0 +1,25 @@
+.idea
+venv
+**/__pycache__
+
+### Terraform ###
+# Compiled files
+venv/*
+*.tfstate
+*.tfstate.*
+
+# Module directory
+.terraform/
+ansible/roles/minifi-c2/files/*.jks
+*.pem
+*.zip
+*.pub
+*.retry
+
+__pycache__/
+*.py[cod]
+*$py.class
+
+# OS generated files #
+######################
+.DS_Store

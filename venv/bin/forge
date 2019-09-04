@@ -1,6 +1,0 @@
-#!/Users/brandonhorn/dev/tele-cli/venv/bin/python3.7
-
-import sys
-import forge
-
-forge.main(sys.argv[1:])
