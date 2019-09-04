@@ -5,7 +5,7 @@ def execute(args):
     add_plugin.execute(args)
 
 def helptext():
-    return "For adding plugins to forge application."
+    return "For managing plugins for use by forge"
 
 def register(app):
-    app.register_plugin('add-plugin', execute, helptext())
+    app.register_plugin('manage-plugins', execute, helptext())

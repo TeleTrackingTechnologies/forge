@@ -31,13 +31,13 @@ class AddPlugin:
             self.handle_error(f'Could not pull plugin {err}', p)
 
         print(Fore.GREEN + '\n' + "Pulled plugin source, configuring for use...")
-
+        self.write_plugin_to_ini(name, parsed_args.repo_url)
         p.terminate()
         print(Fore.GREEN + '\n' + 'Plugin ready for use!')
 
 
     def init_arg_parser(self):
-        parser = argparse.ArgumentParser(prog='forge add-plugin')
+        parser = argparse.ArgumentParser(prog='forge manage-plugins')
         parser.add_argument('-p', '--plugin', action='store', dest='repo_url', required=True,
                             help='Url to git repo containing plugin source.')
         return parser
@@ -68,5 +68,10 @@ class AddPlugin:
             return None
 
 
-    def write_plugin_to_ini(self):
-        
+    def write_plugin_to_ini(self, name, url):
+        config = configparser.ConfigParser()
+        config.read('/usr/local/etc/forge/conf.ini')
+        plugin_section = config['plugin-definitions']
+        plugin_section[name] = url
+        with open('/usr/local/etc/forge/conf.ini', 'w') as configfile:
+            config.write(configfile)
