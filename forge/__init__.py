@@ -1,16 +1,17 @@
+""" Forge """
 #! /usr/bin/env python3
 
 import sys
 import configparser
-from pluginbase import PluginBase
 from pathlib import Path
+from pluginbase import PluginBase
 from tabulate import tabulate
 
-plugin_base = PluginBase(package='plugins')
+PLUGIN_BASE = PluginBase(package='plugins')
 
 
 class Application(object):
-
+    """ Application Class """
     def __init__(self, name):
         self.name = name
 
@@ -19,7 +20,7 @@ class Application(object):
         self.plugins = []
         self.parse_conf('/usr/local/etc/forge/', 'conf.ini')
         self.plugins.append('/usr/local/etc/forge/plugins/manage_plugins')
-        self.plugin_source = plugin_base.make_plugin_source(
+        self.plugin_source = PLUGIN_BASE.make_plugin_source(
             searchpath=self.plugins,
             identifier=self.name)
 
@@ -33,18 +34,21 @@ class Application(object):
         self.registry[name] = (plugin, helptext)
 
     def print_help(self):
+        """ Print Help For All Registered Plugins """
         help_entries = []
         for name in self.registry:
             help_entries.append([name, self.registry[name][1]])
         print(tabulate(help_entries, ['function', 'blurb']))
 
     def execute(self, command, args):
+        """ Execute Plugin """
         if command == 'help':
             self.print_help()
         else:
             self.registry[command][0](args)
 
     def parse_conf(self, forge_dir, conf_file):
+        """ Parse Plugin Configuration File """
         try:
             config = configparser.ConfigParser()
             config.read(forge_dir + conf_file)
@@ -57,6 +61,7 @@ class Application(object):
 
 
 def main(args):
+    """ Main Function Definition """
     print("forge\n")
     if len(args) > 1:
         Application('forge').execute(args[0], args[1:])

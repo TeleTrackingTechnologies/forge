@@ -1,3 +1,4 @@
+""" Manage Plugins Internally """
 import argparse
 from colorama import init, deinit, Fore
 import sys
@@ -10,10 +11,12 @@ import configparser
 
 
 class AddPlugin:
+    """ Add Plugin """
     def __init__(self):
         self.arg_parser = self.init_arg_parser()
 
     def execute(self, args):
+        """ Execute """
         parsed_args = self.arg_parser.parse_args(args)
         p = Process(target=self.show_spinner)
         p.start()
@@ -37,12 +40,14 @@ class AddPlugin:
 
 
     def init_arg_parser(self):
+        """ Initialize Argument Parser """
         parser = argparse.ArgumentParser(prog='forge manage-plugins')
         parser.add_argument('-p', '--plugin', action='store', dest='repo_url', required=True,
                             help='Url to git repo containing plugin source.')
         return parser
 
     def handle_error(self, message, spinner):
+        """ Class Level Error Handling """
         init(autoreset=True)
         spinner.terminate()
         print(Fore.RED + '\n' + message)
@@ -50,9 +55,11 @@ class AddPlugin:
         sys.exit(1)
 
     def pull_plugin(self, url, name):
+        """ Pull Plugin from Git """
         return PluginPuller.clone_plugin(url, name)
 
     def show_spinner(self):
+        """ Graphical Spinner on CLI """
         spinner = itertools.cycle('-/|\\')
         while True:
             sys.stdout.write(next(spinner))
@@ -60,6 +67,7 @@ class AddPlugin:
             sys.stdout.write('\b')
 
     def pull_name_from_url(self, url):
+        """ Extract Plugin Name from Git URL """
         match = re.search('[\s]*\/(forge-[A-Za-z1-9]+)[\s]*', url)
 
         if match:
@@ -69,6 +77,7 @@ class AddPlugin:
 
 
     def write_plugin_to_ini(self, name, url):
+        """ Write Plugin Info to Config File """
         config = configparser.ConfigParser()
         config.read('/usr/local/etc/forge/conf.ini')
         plugin_section = config['plugin-definitions']
