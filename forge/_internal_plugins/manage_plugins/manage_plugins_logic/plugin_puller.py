@@ -2,6 +2,7 @@
 from git import Repo
 from git import Git
 
+
 class PluginPuller:
     """ Plugin Puller Class Def """
 
@@ -11,9 +12,9 @@ class PluginPuller:
         return Git(repo_location).pull('origin', branch_name)
 
     @staticmethod
-    def clone_plugin(repo_url, plugin_name):
+    def clone_plugin(repo_url, plugin_name, branch_name='dev'):
         """ Clone Plugin From Git """
         return Repo.clone_from(
             repo_url, '/usr/local/etc/forge/plugins/' + plugin_name,
-            branch='dev'
+            branch=branch_name
         )
