@@ -18,7 +18,6 @@ class Application(object):
 
         plugins = self.parse_conf('/usr/local/etc/forge/', 'conf.ini')
         plugins.append('/usr/local/etc/forge/plugins/manage_plugins')
-        print(plugins)
         self.plugin_source = plugin_base.make_plugin_source(
             searchpath=plugins,
             identifier=self.name)
