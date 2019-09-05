@@ -3,17 +3,17 @@ import argparse
 import sys
 import itertools
 import re
-import configparser
 from multiprocessing import Process
 from colorama import init, deinit, Fore
 from git import GitCommandError
-from .plugin_puller import PluginPuller
 
 
-class AddPlugin:
-    """ Add Plugin """
-    def __init__(self):
-        self.arg_parser = self.init_arg_parser()
+class ManagePlugins:
+    """ Manage Plugins """
+    def __init__(self, plugin_puller, config_handler):
+            self.arg_parser = self.init_arg_parser()
+            self.plugin_puller = plugin_puller
+            self.config_handler = config_handler
 
     def execute(self, args):
         """ Execute """
@@ -54,10 +54,9 @@ class AddPlugin:
         deinit()
         sys.exit(1)
 
-    @staticmethod
-    def pull_plugin(url, name, branch_name):
+    def pull_plugin(self, url, name, branch_name):
         """ Pull Plugin from Git """
-        return PluginPuller.clone_plugin(url, name, branch_name)
+        return self.plugin_puller.clone_plugin(url, name, branch_name)
 
     @staticmethod
     def show_spinner():
@@ -78,15 +77,6 @@ class AddPlugin:
 
         return None
 
-    @staticmethod
-    def write_plugin_to_ini(name, url):
-        """ Write Plugin Info to Config File """
-        config = configparser.ConfigParser()
-        config.read('/usr/local/etc/forge/conf.ini')
-        plugin_section = config['plugin-definitions']
-        plugin_section[name] = url
-        with open('/usr/local/etc/forge/conf.ini', 'w') as configfile:
-            config.write(configfile)
 
     def validate_args(self, parsed_args):
         action = parsed_args.action_type
@@ -118,7 +108,7 @@ class AddPlugin:
             self.handle_error(f'Could not pull plugin {err}', spinner)
 
         print(Fore.GREEN + '\n' + "Pulled plugin source, configuring for use...")
-        self.write_plugin_to_ini(name, args.repo_url)
+        self.config_handler.write_plugin_to_conf(name, args.repo_url)
         spinner.terminate()
         print(Fore.GREEN + '\n' + 'Plugin ready for use!')
 
@@ -126,15 +116,15 @@ class AddPlugin:
         print('update')
         if args.repo_url:
             try:
-                PluginPuller.pull_plugin(args.repo_url, args.branch_name)
+                self.plugin_puller.pull_plugin(args.repo_url, args.branch_name)
                 print(Fore.GREEN + '\n' + 'Plugin updated!')
             except GitCommandError as err:
                 self.handle_error(f'Could not update plugin {err}', spinner)
         else:
-            for (name, url) in self._get_config().items('plugin-definitions'):
+            for (name, url) in self.config_handler.read_plugin_entries():
                 print(f'Updating {name}...')
                 try:
-                    PluginPuller.pull_plugin(f'/usr/local/etc/forge/plugins/{name}', args.branch_name)
+                    self.plugin_puller.pull_plugin(f'/usr/local/etc/forge/plugins/{name}', args.branch_name)
                 except GitCommandError as err:
                     self.handle_error(f'Could not update plugin {name} :  {err}', spinner)
 
@@ -146,10 +136,3 @@ class AddPlugin:
         print('init')
 
         spinner.terminate()
-
-    @staticmethod
-    def _get_config():
-        config = configparser.ConfigParser()
-        config.sections()
-        config.read('/usr/local/etc/forge/conf.ini')
-        return config

@@ -27,6 +27,7 @@ python-build:
 	( \
     . .venv/bin/activate; \
     pylint -j 4 --rcfile=pylintrc forge; \
+    ./run_tests.sh \
     )
 
 install:
