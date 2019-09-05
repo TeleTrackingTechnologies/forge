@@ -29,15 +29,10 @@ python-build:
     pylint -j 4 --rcfile=pylintrc forge; \
     )
 
-# test: init lint
-# 	. venv/bin/activate; \
-# 	coverage run -m unittest discover -s test/; \
-# 	coverage report -m *.py;
-
 install:
 	( \
 	mkdir -p /usr/local/etc/forge/plugins; \
 	cp -r forge/_internal_plugins/ /usr/local/etc/forge/plugins; \
 	pip3 install -Ur requirements.txt; \
-	cd pip3 install .; \
+	pip3 install .; \
 	)
