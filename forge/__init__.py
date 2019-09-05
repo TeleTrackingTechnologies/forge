@@ -55,7 +55,6 @@ class Application:
             self.plugins.append(forge_dir + 'plugins/' + key)
 
 
-
 def main(args):
     """ Main Function Definition """
     print("forge\n")
