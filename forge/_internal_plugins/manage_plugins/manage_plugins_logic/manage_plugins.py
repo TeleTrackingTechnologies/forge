@@ -12,39 +12,61 @@ from git import GitCommandNotFound
 class ManagePlugins:
     """ Manage Plugins """
     def __init__(self, plugin_puller, config_handler):
-            self.arg_parser = self.init_arg_parser()
-            self.plugin_puller = plugin_puller
-            self.config_handler = config_handler
+        self.arg_parser = self.init_arg_parser()
+        self.plugin_puller = plugin_puller
+        self.config_handler = config_handler
 
     def execute(self, args):
         """ Execute """
         parsed_args = self.arg_parser.parse_args(args)
         self.validate_args(parsed_args)
 
-        p = Process(target=self.show_spinner)
-        p.start()
-        if parsed_args.action_type is 'ADD':
-            self._do_add(parsed_args, p)
-        elif parsed_args.action_type is 'UPDATE':
-            self._do_update(parsed_args, p)
-        elif parsed_args.action_type is 'INIT':
-            self._do_init(parsed_args, p)
+        spinner_process = Process(target=self.show_spinner)
+        spinner_process.start()
+        if parsed_args.action_type == 'ADD':
+            self._do_add(parsed_args, spinner_process)
+        elif parsed_args.action_type == 'UPDATE':
+            self._do_update(parsed_args, spinner_process)
+        elif parsed_args.action_type == 'INIT':
+            self._do_init(parsed_args, spinner_process)
 
     @staticmethod
     def init_arg_parser():
         """ Initialize Argument Parser """
         parser = argparse.ArgumentParser(prog='forge manage-plugins')
-        parser.add_argument('-a', '--add', action='store_const', dest='action_type', const='ADD', required=False,
+        parser.add_argument('-a', '--add',
+                            action='store_const',
+                            dest='action_type',
+                            const='ADD',
+                            required=False,
                             help='Add a new plugin')
-        parser.add_argument('-u', '--update', action='store_const', dest='action_type', const='UPDATE', required=False,
-                            help='Updates a plugin if given a plugin ref or updates all installed if no specific ref is given')
-        parser.add_argument('-i', '--init', action='store_const', dest='action_type', const='INIT', required=False,
+
+        parser.add_argument('-u', '--update',
+                            action='store_const',
+                            dest='action_type',
+                            const='UPDATE',
+                            required=False,
+                            help='Updates named plugin (-n) or all plugins')
+        parser.add_argument('-i', '--init',
+                            action='store_const',
+                            dest='action_type',
+                            const='INIT',
+                            required=False,
                             help='Initializes Forge based on an existing plugin conf.ini.')
-        parser.add_argument('-r', '--repo', action='store', dest='repo_url', required=False,
+        parser.add_argument('-r', '--repo',
+                            action='store',
+                            dest='repo_url',
+                            required=False,
                             help='Url to git repo containing plugin source.')
-        parser.add_argument('-b', '--branch', action='store', dest='branch_name', required=False,
+        parser.add_argument('-b', '--branch',
+                            action='store',
+                            dest='branch_name',
+                            required=False,
                             help='Optionally pass the branch name for the plugin.')
-        parser.add_argument('-n', '--name', action='store', dest='plugin_name', required=False,
+        parser.add_argument('-n', '--name',
+                            action='store',
+                            dest='plugin_name',
+                            required=False,
                             help='The exact name of the plugin.')
         return parser
 
@@ -81,8 +103,9 @@ class ManagePlugins:
         return None
 
     def validate_args(self, parsed_args):
+        """Validates passed in args, the presence of some args makes other args required."""
         action = parsed_args.action_type
-        if action is 'ADD':
+        if action == 'ADD':
             self._validate_add_action(parsed_args)
         elif action is None:
             print(Fore.RED + '\n' +
@@ -99,7 +122,9 @@ class ManagePlugins:
     def _do_add(self, args, spinner):
         name = self.pull_name_from_url(args.repo_url)
         if name is None:
-            self.handle_error('Repository name should be in the form of forge-[alphanumeric name]', spinner)
+            self.handle_error(
+                'Repository name should be in the form of forge-[alphanumeric name]', spinner
+            )
 
         print("Pulling plugin source...")
         try:
@@ -117,17 +142,25 @@ class ManagePlugins:
     def _do_update(self, args, spinner):
         if args.plugin_name:
             try:
-                self.plugin_puller.pull_plugin(f'/usr/local/etc/forge/plugins/{args.plugin_name}', args.branch_name)
+                self.plugin_puller.pull_plugin(
+                    f'/usr/local/etc/forge/plugins/{args.plugin_name}', args.branch_name
+                )
                 print(Fore.GREEN + '\n' + 'Plugin updated!')
             except GitCommandError as err:
                 self.handle_error(f'Could not update plugin {err}', spinner)
             except GitCommandNotFound as err:
-                self.handle_error(f'Could not update plugin, most likely caused by providing an invalid name.', spinner)
+                self.handle_error(
+                    f'Could not update plugin, most likely caused by providing an invalid name.'
+                    , spinner
+                )
         else:
-            for (name, url) in self.config_handler.read_plugin_entries():
+            for name in self.config_handler.read_plugin_entries():
                 print(f'Updating {name}...')
                 try:
-                    self.plugin_puller.pull_plugin(f'/usr/local/etc/forge/plugins/{name}', args.branch_name)
+                    self.plugin_puller.pull_plugin(
+                        f'/usr/local/etc/forge/plugins/{name}',
+                        args.branch_name
+                    )
                 except GitCommandError as err:
                     self.handle_error(f'Could not update plugin {name} :  {err}', spinner)
 

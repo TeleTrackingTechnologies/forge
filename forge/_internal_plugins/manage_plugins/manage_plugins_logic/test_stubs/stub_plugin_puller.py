@@ -1,5 +1,5 @@
+# pylint: disable=all
 from git import GitCommandError
-
 
 class StubPluginPuller:
     @staticmethod
