@@ -27,7 +27,6 @@ python-build:
 	( \
     . .venv/bin/activate; \
     pylint -j 4 --rcfile=pylintrc forge; \
-    ./run_tests.sh \
     )
 
 install:
@@ -36,4 +35,7 @@ install:
 	cp -r forge/_internal_plugins/ /usr/local/etc/forge/plugins; \
 	pip3 install -Ur requirements.txt; \
 	pip3 install .; \
-	)
+    )
+
+test:
+	python -m unittest discover -s forge -p '*_test.py'

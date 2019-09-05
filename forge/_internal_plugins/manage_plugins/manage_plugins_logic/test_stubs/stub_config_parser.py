@@ -7,4 +7,4 @@ class StubPluginConfigHandler:
     @staticmethod
     def read_plugin_entries():
         """Reads installed plugin entries"""
-        return []
+        return [('some_name', 'some_url')]

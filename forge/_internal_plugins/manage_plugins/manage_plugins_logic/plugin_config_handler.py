@@ -20,3 +20,4 @@ class PluginConfigHandler:
         config.sections()
         config.read(self.CONF_FILE_LOCATION)
         return config.items('plugin-definitions')
+
