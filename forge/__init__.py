@@ -6,6 +6,7 @@ import configparser
 from pathlib import Path
 from pluginbase import PluginBase
 from tabulate import tabulate
+import os
 
 PLUGIN_BASE = PluginBase(package='plugins')
 
@@ -51,9 +52,17 @@ class Application:
         """ Parse Plugin Configuration File """
         config = configparser.ConfigParser()
         config.read(forge_dir + conf_file)
+
+        if not os.path.exists(forge_dir + conf_file):
+            self._init_conf_file(forge_dir + conf_file, config)
+
         for key in config['plugin-definitions']:
             self.plugins.append(forge_dir + 'plugins/' + key)
 
+    @staticmethod
+    def _init_conf_file(path, config):
+        config['plugin-definitions'] = {}
+        config.write(open(path, 'w'))
 
 def main(args):
     """ Main Function Definition """
