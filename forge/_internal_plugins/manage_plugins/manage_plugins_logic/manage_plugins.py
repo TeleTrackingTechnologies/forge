@@ -1,36 +1,37 @@
+""" Manage Plugins Internally """
 import argparse
-from colorama import init, deinit, Fore
 import sys
-from multiprocessing import Process
 import itertools
-from git import GitCommandError
 import re
-from .plugin_puller import PluginPuller
 import configparser
+from multiprocessing import Process
+from colorama import init, deinit, Fore
+from git import GitCommandError
+from .plugin_puller import PluginPuller
 
 
 class AddPlugin:
+    """ Add Plugin """
     def __init__(self):
         self.arg_parser = self.init_arg_parser()
 
     def execute(self, args):
+        """ Execute """
         parsed_args = self.arg_parser.parse_args(args)
         self.validate_args(parsed_args)
 
         p = Process(target=self.show_spinner)
         p.start()
-
         if parsed_args.action_type is 'ADD':
             self._do_add(parsed_args, p)
         elif parsed_args.action_type is 'UPDATE':
             self._do_update(parsed_args, p)
-
         elif parsed_args.action_type is 'INIT':
             self._do_init(parsed_args, p)
 
-
-
-    def init_arg_parser(self):
+    @staticmethod
+    def init_arg_parser():
+        """ Initialize Argument Parser """
         parser = argparse.ArgumentParser(prog='forge manage-plugins')
         parser.add_argument('-a', '--add', action='store_const', dest='action_type', const='ADD', required=False,
                             help='Add a new plugin')
@@ -44,33 +45,42 @@ class AddPlugin:
                             help='Optionally pass the branch name for the plugin.')
         return parser
 
-    def handle_error(self, message, spinner):
+    @staticmethod
+    def handle_error(message, spinner):
+        """ Class Level Error Handling """
         init(autoreset=True)
         spinner.terminate()
         print(Fore.RED + '\n' + message)
         deinit()
         sys.exit(1)
 
-    def pull_plugin(self, url, name, branch_name):
+    @staticmethod
+    def pull_plugin(url, name, branch_name):
+        """ Pull Plugin from Git """
         return PluginPuller.clone_plugin(url, name, branch_name)
 
-    def show_spinner(self):
+    @staticmethod
+    def show_spinner():
+        """ Graphical Spinner on CLI """
         spinner = itertools.cycle('-/|\\')
         while True:
             sys.stdout.write(next(spinner))
             sys.stdout.flush()
             sys.stdout.write('\b')
 
-    def pull_name_from_url(self, url):
-        match = re.search('[\s]*\/(forge-[A-Za-z1-9]+)[\s]*', url)
+    @staticmethod
+    def pull_name_from_url(url):
+        """ Extract Plugin Name from Git URL """
+        match = re.search(r'[\s]*\/(forge-[A-Za-z1-9]+)[\s]*', url)
 
         if match:
             return match.group(1)
-        else:
-            return None
 
+        return None
 
-    def write_plugin_to_ini(self, name, url):
+    @staticmethod
+    def write_plugin_to_ini(name, url):
+        """ Write Plugin Info to Config File """
         config = configparser.ConfigParser()
         config.read('/usr/local/etc/forge/conf.ini')
         plugin_section = config['plugin-definitions']
@@ -87,6 +97,7 @@ class AddPlugin:
                   'Please provide an action with -a, -u or -i')
             sys.exit(1)
 
+    @staticmethod
     def _validate_add_action(self, args):
         if args.repo_url is None:
             print(Fore.RED + '\n' +
@@ -130,12 +141,14 @@ class AddPlugin:
         print(Fore.GREEN + '\n' + 'Plugin(s) updated!')
         spinner.terminate()
 
-    def _do_init(self, args, spinner):
+    @staticmethod
+    def _do_init(args, spinner):
         print('init')
 
         spinner.terminate()
 
-    def _get_config(self):
+    @staticmethod
+    def _get_config():
         config = configparser.ConfigParser()
         config.sections()
         config.read('/usr/local/etc/forge/conf.ini')
