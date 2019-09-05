@@ -98,7 +98,7 @@ class AddPlugin:
             sys.exit(1)
 
     @staticmethod
-    def _validate_add_action(self, args):
+    def _validate_add_action(args):
         if args.repo_url is None:
             print(Fore.RED + '\n' +
                   'Cant add plugin without providing url!')
