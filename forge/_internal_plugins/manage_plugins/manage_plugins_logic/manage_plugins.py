@@ -40,7 +40,7 @@ class ManagePlugins:
                             help='Updates a plugin if given a plugin ref or updates all installed if no specific ref is given')
         parser.add_argument('-i', '--init', action='store_const', dest='action_type', const='INIT', required=False,
                             help='Initializes Forge based on an existing plugin conf.ini.')
-        parser.add_argument('-p', '--plugin', action='store', dest='repo_url', required=False,
+        parser.add_argument('-r', '--repo', action='store', dest='repo_url', required=False,
                             help='Url to git repo containing plugin source.')
         parser.add_argument('-b', '--branch', action='store', dest='branch_name', required=False,
                             help='Optionally pass the branch name for the plugin.')
@@ -134,8 +134,12 @@ class ManagePlugins:
         print(Fore.GREEN + '\n' + 'Plugin(s) updated!')
         spinner.terminate()
 
-    @staticmethod
-    def _do_init(args, spinner):
-        print('init')
-
+    def _do_init(self, args, spinner):
+        for(name, url) in self.config_handler.read_plugin_entries():
+            print(f'Installing {name}...')
+            try:
+                self.plugin_puller.clone_plugin(url, name, args.branch_name)
+            except GitCommandError as err:
+                self.handle_error(f'Could not install plugin {name} :  {err}', spinner)
+        print(Fore.GREEN + '\n' + 'Plugins installed!')
         spinner.terminate()
