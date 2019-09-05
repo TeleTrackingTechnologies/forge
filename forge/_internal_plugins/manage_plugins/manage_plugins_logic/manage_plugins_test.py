@@ -1,3 +1,4 @@
+# pylint: disable=all
 import unittest
 from .manage_plugins import ManagePlugins
 from .test_stubs.stub_plugin_puller import StubPluginPuller

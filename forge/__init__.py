@@ -57,7 +57,7 @@ class Application:
 
 def main(args):
     """ Main Function Definition """
-    print("forge\n")
+
     if len(args) > 1:
         Application('forge').execute(args[0], args[1:])
     else:
