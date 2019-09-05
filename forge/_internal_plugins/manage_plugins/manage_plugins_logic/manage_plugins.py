@@ -1,13 +1,13 @@
 """ Manage Plugins Internally """
 import argparse
-from colorama import init, deinit, Fore
 import sys
-from multiprocessing import Process
 import itertools
-from git import GitCommandError
 import re
-from .plugin_puller import PluginPuller
 import configparser
+from multiprocessing import Process
+from colorama import init, deinit, Fore
+from git import GitCommandError
+from .plugin_puller import PluginPuller
 
 
 class AddPlugin:
@@ -41,15 +41,16 @@ class AddPlugin:
         process.terminate()
         print(Fore.GREEN + '\n' + 'Plugin ready for use!')
 
-
-    def init_arg_parser(self):
+    @staticmethod
+    def init_arg_parser():
         """ Initialize Argument Parser """
         parser = argparse.ArgumentParser(prog='forge manage-plugins')
         parser.add_argument('-p', '--plugin', action='store', dest='repo_url', required=True,
                             help='Url to git repo containing plugin source.')
         return parser
 
-    def handle_error(self, message, spinner):
+    @staticmethod
+    def handle_error(message, spinner):
         """ Class Level Error Handling """
         init(autoreset=True)
         spinner.terminate()
@@ -57,11 +58,13 @@ class AddPlugin:
         deinit()
         sys.exit(1)
 
-    def pull_plugin(self, url, name):
+    @staticmethod
+    def pull_plugin(url, name):
         """ Pull Plugin from Git """
         return PluginPuller.clone_plugin(url, name)
 
-    def show_spinner(self):
+    @staticmethod
+    def show_spinner():
         """ Graphical Spinner on CLI """
         spinner = itertools.cycle('-/|\\')
         while True:
@@ -69,17 +72,18 @@ class AddPlugin:
             sys.stdout.flush()
             sys.stdout.write('\b')
 
-    def pull_name_from_url(self, url):
+    @staticmethod
+    def pull_name_from_url(url):
         """ Extract Plugin Name from Git URL """
         match = re.search(r'[\s]*\/(forge-[A-Za-z1-9]+)[\s]*', url)
 
         if match:
             return match.group(1)
-        else:
-            return None
 
+        return None
 
-    def write_plugin_to_ini(self, name, url):
+    @staticmethod
+    def write_plugin_to_ini(name, url):
         """ Write Plugin Info to Config File """
         config = configparser.ConfigParser()
         config.read('/usr/local/etc/forge/conf.ini')

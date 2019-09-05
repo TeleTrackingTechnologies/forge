@@ -49,14 +49,10 @@ class Application:
 
     def parse_conf(self, forge_dir, conf_file):
         """ Parse Plugin Configuration File """
-        try:
-            config = configparser.ConfigParser()
-            config.read(forge_dir + conf_file)
-            for key in config['plugin-definitions']:
-                self.plugins.append(forge_dir + 'plugins/' + key)
-        except:
-            # TODO: improve error handling
-            print('config parse failed')
+        config = configparser.ConfigParser()
+        config.read(forge_dir + conf_file)
+        for key in config['plugin-definitions']:
+            self.plugins.append(forge_dir + 'plugins/' + key)
 
 
 
