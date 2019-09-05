@@ -10,7 +10,7 @@ from tabulate import tabulate
 PLUGIN_BASE = PluginBase(package='plugins')
 
 
-class Application(object):
+class Application:
     """ Application Class """
     def __init__(self, name):
         self.name = name

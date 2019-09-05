@@ -18,7 +18,7 @@ init:
 	virtualenv --python=python3 --always-copy .venv
 	( \
     . .venv/bin/activate; \
-    pip install -r requirements.txt; \
+    pip3 install -r requirements.txt; \
     )
 
 lint: python-build
@@ -26,7 +26,7 @@ lint: python-build
 python-build:
 	( \
     . .venv/bin/activate; \
-    pylint -j 4 forge; \
+    pylint -j 4 --rcfile=pylintrc forge; \
     )
 
 # test: init lint
@@ -35,7 +35,9 @@ python-build:
 # 	coverage report -m *.py;
 
 install:
-	mkdir -p /usr/local/etc/forge/plugins
-	cp -r _internal_plugins/ /usr/local/etc/forge/plugins
-	pip3 install -Ur requirements.txt
-	cd ../; pip3 install .
+	( \
+	mkdir -p /usr/local/etc/forge/plugins; \
+	cp -r forge/_internal_plugins/ /usr/local/etc/forge/plugins; \
+	pip3 install -Ur requirements.txt; \
+	cd pip3 install .; \
+	)

@@ -18,24 +18,27 @@ class AddPlugin:
     def execute(self, args):
         """ Execute """
         parsed_args = self.arg_parser.parse_args(args)
-        p = Process(target=self.show_spinner)
-        p.start()
+        process = Process(target=self.show_spinner)
+        process.start()
 
         name = self.pull_name_from_url(parsed_args.repo_url)
         if name is None:
-            self.handle_error('Repository name should be in the form of forge-[alphanumeric name]', p)
+            self.handle_error(
+                'Repository name should be in the form of forge-[alphanumeric name]',
+                process
+            )
 
         print("Pulling plugin source...")
         try:
             repo = self.pull_plugin(parsed_args.repo_url, name)
             if repo.bare:
-                self.handle_error('Plugin repository contained no source code...', p)
+                self.handle_error('Plugin repository contained no source code...', process)
         except GitCommandError as err:
-            self.handle_error(f'Could not pull plugin {err}', p)
+            self.handle_error(f'Could not pull plugin {err}', process)
 
         print(Fore.GREEN + '\n' + "Pulled plugin source, configuring for use...")
         self.write_plugin_to_ini(name, parsed_args.repo_url)
-        p.terminate()
+        process.terminate()
         print(Fore.GREEN + '\n' + 'Plugin ready for use!')
 
 
@@ -68,7 +71,7 @@ class AddPlugin:
 
     def pull_name_from_url(self, url):
         """ Extract Plugin Name from Git URL """
-        match = re.search('[\s]*\/(forge-[A-Za-z1-9]+)[\s]*', url)
+        match = re.search(r'[\s]*\/(forge-[A-Za-z1-9]+)[\s]*', url)
 
         if match:
             return match.group(1)
