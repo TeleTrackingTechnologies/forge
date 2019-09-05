@@ -1,7 +1,10 @@
+from git import GitCommandError
+
+
 class StubPluginPuller:
     @staticmethod
     def pull_plugin(repo_location, branch_name='dev'):
-        """ Executes a 'git pull' on the provided repo."""
+        """ stub for pull_plugin of PluginPuller."""
         return {}
 
     @staticmethod
@@ -12,3 +15,10 @@ class StubPluginPuller:
 
 class StubRepo:
     bare = False
+
+
+class StubPluginPullerWithError:
+    @staticmethod
+    def pull_plugin(repo_location, branch_name='dev'):
+        """stub method to raise error on pull."""
+        raise GitCommandError('test', None)

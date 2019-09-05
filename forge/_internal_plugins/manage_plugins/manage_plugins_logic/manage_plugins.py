@@ -6,6 +6,7 @@ import re
 from multiprocessing import Process
 from colorama import init, deinit, Fore
 from git import GitCommandError
+from git import GitCommandNotFound
 
 
 class ManagePlugins:
@@ -43,6 +44,8 @@ class ManagePlugins:
                             help='Url to git repo containing plugin source.')
         parser.add_argument('-b', '--branch', action='store', dest='branch_name', required=False,
                             help='Optionally pass the branch name for the plugin.')
+        parser.add_argument('-n', '--name', action='store', dest='plugin_name', required=False,
+                            help='The exact name of the plugin.')
         return parser
 
     @staticmethod
@@ -76,7 +79,6 @@ class ManagePlugins:
             return match.group(1)
 
         return None
-
 
     def validate_args(self, parsed_args):
         action = parsed_args.action_type
@@ -113,13 +115,14 @@ class ManagePlugins:
         print(Fore.GREEN + '\n' + 'Plugin ready for use!')
 
     def _do_update(self, args, spinner):
-        print('update')
-        if args.repo_url:
+        if args.plugin_name:
             try:
-                self.plugin_puller.pull_plugin(args.repo_url, args.branch_name)
+                self.plugin_puller.pull_plugin(f'/usr/local/etc/forge/plugins/{args.plugin_name}', args.branch_name)
                 print(Fore.GREEN + '\n' + 'Plugin updated!')
             except GitCommandError as err:
                 self.handle_error(f'Could not update plugin {err}', spinner)
+            except GitCommandNotFound as err:
+                self.handle_error(f'Could not update plugin, most likely caused by providing an invalid name.', spinner)
         else:
             for (name, url) in self.config_handler.read_plugin_entries():
                 print(f'Updating {name}...')
