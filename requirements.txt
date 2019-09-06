@@ -40,3 +40,4 @@ virtualenv==16.6.0
 virtualenv-clone==0.5.3
 urllib3==1.25.3
 webcolors==1.9.1
+Jinja2==2.10.1

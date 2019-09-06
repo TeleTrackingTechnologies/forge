@@ -33,7 +33,13 @@ class ManagePlugins:
     @staticmethod
     def init_arg_parser():
         """ Initialize Argument Parser """
-        parser = argparse.ArgumentParser(prog='forge manage-plugins')
+        parser = argparse.ArgumentParser(
+            prog='forge manage-plugins',
+            description='Tool to allow users to configure their '
+                        'anvil installations with plugins. Provides '
+                        'the ability to add plugins via a repo reference '
+                        'and the ability to update all plugins currently installed. '
+                        'See -h for more information.')
         parser.add_argument('-a', '--add',
                             action='store_const',
                             dest='action_type',
@@ -46,7 +52,8 @@ class ManagePlugins:
                             dest='action_type',
                             const='UPDATE',
                             required=False,
-                            help='Updates named plugin (-n) or all plugins')
+                            help='Updates named plugin (via -n) or all plugins if -n not '
+                                 'provided')
         parser.add_argument('-i', '--init',
                             action='store_const',
                             dest='action_type',
@@ -57,7 +64,8 @@ class ManagePlugins:
                             action='store',
                             dest='repo_url',
                             required=False,
-                            help='Url to git repo containing plugin source.')
+                            help='Url to git repo containing plugin source. '
+                                 'NOTE it must refer to the clone URL, not the browser URL.')
         parser.add_argument('-b', '--branch',
                             action='store',
                             dest='branch_name',

@@ -11,7 +11,7 @@ def execute(args):
 
 def helptext():
     """ Simple Helptext For Plugin """
-    return "For managing plugins for use by forge"
+    return "For managing plugins for use by forge."
 
 
 def register(app):
