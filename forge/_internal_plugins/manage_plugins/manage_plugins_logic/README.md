@@ -1,5 +1,5 @@
-# add-plugin
+# manage-plugins
 ## What is this
-This base 'plugin' is needed to add other plugins to the core forge application. 
+This base 'plugin' is needed to add and update plugins for use by Forge.
 ## Usage
-`usage: forge add-plugin -p [PLUGIN_REPO_URL] `
+`usage: forge manage-plugins -h`

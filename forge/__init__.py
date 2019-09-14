@@ -1,12 +1,12 @@
 """ Forge """
 #! /usr/bin/env python3
-
 import sys
+import os
 import configparser
 from pathlib import Path
 from pluginbase import PluginBase
 from tabulate import tabulate
-import os
+
 
 PLUGIN_BASE = PluginBase(package='plugins')
 
