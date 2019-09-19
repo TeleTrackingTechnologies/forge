@@ -1,10 +1,11 @@
 .idea
 venv
+.vscode
+.venv
 **/__pycache__
 
 ### Terraform ###
 # Compiled files
-venv/*
 *.tfstate
 *.tfstate.*
 
