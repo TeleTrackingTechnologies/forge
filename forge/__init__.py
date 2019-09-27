@@ -62,7 +62,8 @@ class Application:
     @staticmethod
     def _init_conf_file(path, config):
         config['plugin-definitions'] = {}
-        config.write(open(path, 'w'))
+        with open(path, 'w') as f:
+            config.write(f)
 
 def main(args):
     """ Main Function Definition """
