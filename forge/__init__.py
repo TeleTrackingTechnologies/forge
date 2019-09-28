@@ -21,10 +21,8 @@ class Application:
         self._init_conf_file()
         self.name = name
         self.registry = {}
-        self.plugins = []
+        self.plugins = [INTERNAL_PLUGIN_PATH, self._read_plugin_location()]
         self.parse_conf(self._read_plugin_location())
-        self.plugins.append(INTERNAL_PLUGIN_PATH)
-        self.plugins.append(self._read_plugin_location())
         self.plugin_source = PLUGIN_BASE.make_plugin_source(
             searchpath=self.plugins,
             identifier=self.name)
@@ -55,14 +53,14 @@ class Application:
         """ Parse Plugin Configuration File """
         config = self._get_config_parser()
         for key in config['plugin-definitions']:
-            self.plugins.append(plugin_location + '/' + key)
+            self.plugins.append(str(Path(plugin_location + '/' + key)))
 
     def _init_conf_file(self):
         config = self._get_config_parser()
         if not os.path.exists(CONFIG_FILE_PATH):
             config['plugin-definitions'] = {}
             config['install-conf'] = {}
-            config['install-conf']['pluginlocation'] = CONF_HOME + '/plugins' # this is default plugin install location
+            config['install-conf']['pluginlocation'] = str(Path(CONF_HOME + '/plugins')) # this is default plugin install location
             with open(CONFIG_FILE_PATH, 'w') as conf_file:
                 config.write(conf_file)
 
