@@ -5,5 +5,5 @@ class StubPluginConfigHandler:
         print('stub writing to file')
 
     @staticmethod
-    def read_plugin_entries():
+    def get_plugin_entries():
         return [('some_name', 'some_url')]

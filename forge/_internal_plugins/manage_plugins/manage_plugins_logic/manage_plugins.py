@@ -151,7 +151,7 @@ class ManagePlugins:
         if args.plugin_name:
             try:
                 self.plugin_puller.pull_plugin(
-                    f'/usr/local/etc/forge/plugins/{args.plugin_name}', args.branch_name
+                    args.plugin_name, args.branch_name
                 )
                 print(Fore.GREEN + '\n' + 'Plugin updated!')
             except GitCommandError as err:
@@ -162,11 +162,11 @@ class ManagePlugins:
                     , spinner
                 )
         else:
-            for name in self.config_handler.read_plugin_entries():
+            for name in self.config_handler.get_plugin_entries():
                 print(f'Updating {name}...')
                 try:
                     self.plugin_puller.pull_plugin(
-                        f'/usr/local/etc/forge/plugins/{name}',
+                        name,
                         args.branch_name
                     )
                 except GitCommandError as err:
@@ -176,7 +176,7 @@ class ManagePlugins:
         spinner.terminate()
 
     def _do_init(self, args, spinner):
-        for(name, url) in self.config_handler.read_plugin_entries():
+        for(name, url) in self.config_handler.get_plugin_entries():
             print(f'Installing {name}...')
             try:
                 self.plugin_puller.clone_plugin(url, name, args.branch_name)

@@ -1,11 +1,12 @@
 """ Manage Plugins Plugin """
+from forge.config.config_handler import ConfigHandler
 from .manage_plugins_logic.manage_plugins import ManagePlugins
 from .manage_plugins_logic.plugin_puller import PluginPuller
-from .manage_plugins_logic.plugin_config_handler import PluginConfigHandler
 
 def execute(args):
     """ Plugin Execution Definition """
-    manage_plugins_logic = ManagePlugins(PluginPuller(), PluginConfigHandler())
+    config_handler = ConfigHandler()
+    manage_plugins_logic = ManagePlugins(PluginPuller(config_handler), config_handler)
     manage_plugins_logic.execute(args)
 
 
