@@ -9,22 +9,25 @@ from tabulate import tabulate
 
 
 PLUGIN_BASE = PluginBase(package='plugins')
-
+CONF_HOME = str(Path.home()) + '/.forge'
+CONFIG_FILE_PATH = CONF_HOME + '/conf.ini'
+WORKING_DIR = os.path.dirname(os.path.abspath(__file__))
+INTERNAL_PLUGIN_PATH = f'{WORKING_DIR}/_internal_plugins/manage_plugins'
 
 class Application:
     """ Application Class """
     def __init__(self, name):
+        self._init_conf_dir()
+        self._init_conf_file()
         self.name = name
-
         self.registry = {}
-
         self.plugins = []
-        self.parse_conf('/usr/local/etc/forge/', 'conf.ini')
-        self.plugins.append('/usr/local/etc/forge/plugins/manage_plugins')
+        self.parse_conf(self._read_plugin_location())
+        self.plugins.append(INTERNAL_PLUGIN_PATH)
+        self.plugins.append(self._read_plugin_location())
         self.plugin_source = PLUGIN_BASE.make_plugin_source(
             searchpath=self.plugins,
             identifier=self.name)
-
         for plugin_name in self.plugin_source.list_plugins():
             plugin = self.plugin_source.load_plugin(plugin_name)
             if callable(getattr(plugin, "register", None)):
@@ -48,26 +51,37 @@ class Application:
         else:
             self.registry[command][0](args)
 
-    def parse_conf(self, forge_dir, conf_file):
+    def parse_conf(self, plugin_location):
         """ Parse Plugin Configuration File """
-        config = configparser.ConfigParser()
-        config.read(forge_dir + conf_file)
-
-        if not os.path.exists(forge_dir + conf_file):
-            self._init_conf_file(forge_dir + conf_file, config)
-
+        config = self._get_config_parser()
         for key in config['plugin-definitions']:
-            self.plugins.append(forge_dir + 'plugins/' + key)
+            self.plugins.append(plugin_location + '/' + key)
+
+    def _init_conf_file(self):
+        config = self._get_config_parser()
+        if not os.path.exists(CONFIG_FILE_PATH):
+            config['plugin-definitions'] = {}
+            config['install-conf'] = {}
+            config['install-conf']['pluginlocation'] = CONF_HOME + '/plugins' # this is default plugin install location
+            with open(CONFIG_FILE_PATH, 'w') as conf_file:
+                config.write(conf_file)
 
     @staticmethod
-    def _init_conf_file(path, config):
-        config['plugin-definitions'] = {}
-        with open(path, 'w') as f:
-            config.write(f)
+    def _init_conf_dir():
+        if not os.path.exists(CONF_HOME):
+            os.mkdir(CONF_HOME)
+    
+    def _read_plugin_location(self):
+        return self._get_config_parser()['install-conf']['pluginlocation']
 
+    @staticmethod
+    def _get_config_parser():
+        config_parser = configparser.ConfigParser()
+        config_parser.read(CONFIG_FILE_PATH);
+        return config_parser
+        
 def main(args):
     """ Main Function Definition """
-
     if len(args) > 1:
         Application('forge').execute(args[0], args[1:])
     else:

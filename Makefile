@@ -31,8 +31,6 @@ python-build:
 
 install:
 	( \
-	mkdir -p /usr/local/etc/forge/plugins; \
-	cp -r forge/_internal_plugins/ /usr/local/etc/forge/plugins; \
 	pip3 install -Ur requirements.txt; \
 	pip3 install .; \
     )
