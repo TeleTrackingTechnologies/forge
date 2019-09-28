@@ -1,20 +1,22 @@
 """ Plugin Puller """
+from pathlib import Path
 from git import Repo
 from git import Git
 
-
 class PluginPuller:
     """ Plugin Puller Class Def """
+    def __init__(self, config_handler):
+        self.config_handler = config_handler
 
-    @staticmethod
-    def pull_plugin(repo_location, branch_name='dev'):
-        """ Executes a 'git pull' on the provided repo."""
-        return Git(repo_location).pull('origin', branch_name)
+    def pull_plugin(self, plugin_name, branch_name='dev'):
+        """Updates plugin by executing a git pull from its install location"""
+        repo = str(Path(f'{self.config_handler.get_plugin_install_location()}/{plugin_name}'))
+        return Git(repo).pull('origin', branch_name)
 
-    @staticmethod
-    def clone_plugin(repo_url, plugin_name, branch_name='dev'):
+    def clone_plugin(self, repo_url, plugin_name, branch_name='dev'):
         """ Clone Plugin From Git """
         return Repo.clone_from(
-            repo_url, '/usr/local/etc/forge/plugins/' + plugin_name,
+            repo_url,
+            str(Path(f'{self.config_handler.get_plugin_install_location()}/{plugin_name}')),
             branch=branch_name
         )

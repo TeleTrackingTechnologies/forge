@@ -4,7 +4,7 @@ setup(name='forge',
       version='0.1',
       description='convenient cli with extendable collection of useful plugins',
       author='Brandon Horn, Kenneth Poling, Paul Verardi, Cameron Tucker, Clint Wadley',
-      packages=['forge', 'forge._internal_plugins.manage_plugins', 'forge._internal_plugins.manage_plugins.manage_plugins_logic'],
+      packages=['forge', 'forge.config', 'forge._internal_plugins', 'forge._internal_plugins.manage_plugins', 'forge._internal_plugins.manage_plugins.manage_plugins_logic'],
       install_requires=[
             "boto3==1.9.122",
             "botocore==1.12.122",
