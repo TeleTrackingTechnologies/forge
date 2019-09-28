@@ -9,10 +9,10 @@ from tabulate import tabulate
 
 
 PLUGIN_BASE = PluginBase(package='plugins')
-CONF_HOME = str(Path.home()) + '/.forge'
-CONFIG_FILE_PATH = CONF_HOME + '/conf.ini'
+CONF_HOME = str(Path(str(Path.home()) + '/.forge'))
+CONFIG_FILE_PATH = str(Path(CONF_HOME + '/conf.ini'))
 WORKING_DIR = os.path.dirname(os.path.abspath(__file__))
-INTERNAL_PLUGIN_PATH = f'{WORKING_DIR}/_internal_plugins/manage_plugins'
+INTERNAL_PLUGIN_PATH = str(Path(f'{WORKING_DIR}/_internal_plugins/manage_plugins'))
 
 class Application:
     """ Application Class """
