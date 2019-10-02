@@ -3,10 +3,14 @@ import argparse
 import sys
 import itertools
 import re
+import subprocess
+from pip._internal import main
 from multiprocessing import Process
+from pathlib import Path
 from colorama import init, deinit, Fore
 from git import GitCommandError
 from git import GitCommandNotFound
+
 
 
 class ManagePlugins:
@@ -133,7 +137,7 @@ class ManagePlugins:
             self.handle_error(
                 'Repository name should be in the form of forge-[alphanumeric name]', spinner
             )
-
+        repo = None
         print("Pulling plugin source...")
         try:
             repo = self.pull_plugin(args.repo_url, name, args.branch_name)
@@ -142,6 +146,9 @@ class ManagePlugins:
         except GitCommandError as err:
             self.handle_error(f'Could not pull plugin {err}', spinner)
 
+        print("Installing plugin dependencies...")
+        plugin_location = str(Path(f'{self.config_handler.get_plugin_install_location()}/{name}'))
+        self._install_dependencies(plugin_location)        
         print(Fore.GREEN + '\n' + "Pulled plugin source, configuring for use...")
         self.config_handler.write_plugin_to_conf(name, args.repo_url)
         spinner.terminate()
@@ -184,3 +191,8 @@ class ManagePlugins:
                 self.handle_error(f'Could not install plugin {name} :  {err}', spinner)
         print(Fore.GREEN + '\n' + 'Plugins installed!')
         spinner.terminate()
+
+    def _install_dependencies(self, plugin_location):
+        with open(Path(f'{plugin_location}/requirements.txt')) as requirements_file:
+            for line in requirements_file:
+                main(['install', '-U', line]) #pip main
