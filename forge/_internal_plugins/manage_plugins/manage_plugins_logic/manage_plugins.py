@@ -9,6 +9,7 @@ from git import GitCommandError
 from git import GitCommandNotFound
 
 
+
 class ManagePlugins:
     """ Manage Plugins """
     def __init__(self, plugin_puller, config_handler):
@@ -133,7 +134,7 @@ class ManagePlugins:
             self.handle_error(
                 'Repository name should be in the form of forge-[alphanumeric name]', spinner
             )
-
+        repo = None
         print("Pulling plugin source...")
         try:
             repo = self.pull_plugin(args.repo_url, name, args.branch_name)
@@ -141,7 +142,6 @@ class ManagePlugins:
                 self.handle_error('Plugin repository contained no source code...', spinner)
         except GitCommandError as err:
             self.handle_error(f'Could not pull plugin {err}', spinner)
-
         print(Fore.GREEN + '\n' + "Pulled plugin source, configuring for use...")
         self.config_handler.write_plugin_to_conf(name, args.repo_url)
         spinner.terminate()
@@ -171,9 +171,8 @@ class ManagePlugins:
                     )
                 except GitCommandError as err:
                     self.handle_error(f'Could not update plugin {name} :  {err}', spinner)
-
-        print(Fore.GREEN + '\n' + 'Plugin(s) updated!')
         spinner.terminate()
+        print(Fore.GREEN + '\n' + 'Plugin(s) updated!')
 
     def _do_init(self, args, spinner):
         for(name, url) in self.config_handler.get_plugin_entries():
@@ -182,5 +181,5 @@ class ManagePlugins:
                 self.plugin_puller.clone_plugin(url, name, args.branch_name)
             except GitCommandError as err:
                 self.handle_error(f'Could not install plugin {name} :  {err}', spinner)
-        print(Fore.GREEN + '\n' + 'Plugins installed!')
         spinner.terminate()
+        print(Fore.GREEN + '\n' + 'Plugins installed!')

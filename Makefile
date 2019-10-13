@@ -20,7 +20,7 @@ help:
 
 init:
 	rm -rf .venv
-	pip install virtualenv
+	pip3 install virtualenv
 	virtualenv --python=python3 --always-copy .venv
 	( \
     . .venv/bin/activate; \
