@@ -3,10 +3,7 @@ import argparse
 import sys
 import itertools
 import re
-import subprocess
-from pip._internal import main
 from multiprocessing import Process
-from pathlib import Path
 from colorama import init, deinit, Fore
 from git import GitCommandError
 from git import GitCommandNotFound
@@ -145,10 +142,6 @@ class ManagePlugins:
                 self.handle_error('Plugin repository contained no source code...', spinner)
         except GitCommandError as err:
             self.handle_error(f'Could not pull plugin {err}', spinner)
-
-        print("Installing plugin dependencies...")
-        plugin_location = str(Path(f'{self.config_handler.get_plugin_install_location()}/{name}'))
-        self._install_dependencies(plugin_location)        
         print(Fore.GREEN + '\n' + "Pulled plugin source, configuring for use...")
         self.config_handler.write_plugin_to_conf(name, args.repo_url)
         spinner.terminate()
@@ -178,9 +171,8 @@ class ManagePlugins:
                     )
                 except GitCommandError as err:
                     self.handle_error(f'Could not update plugin {name} :  {err}', spinner)
-
-        print(Fore.GREEN + '\n' + 'Plugin(s) updated!')
         spinner.terminate()
+        print(Fore.GREEN + '\n' + 'Plugin(s) updated!')
 
     def _do_init(self, args, spinner):
         for(name, url) in self.config_handler.get_plugin_entries():
@@ -189,10 +181,5 @@ class ManagePlugins:
                 self.plugin_puller.clone_plugin(url, name, args.branch_name)
             except GitCommandError as err:
                 self.handle_error(f'Could not install plugin {name} :  {err}', spinner)
-        print(Fore.GREEN + '\n' + 'Plugins installed!')
         spinner.terminate()
-
-    def _install_dependencies(self, plugin_location):
-        with open(Path(f'{plugin_location}/requirements.txt')) as requirements_file:
-            for line in requirements_file:
-                main(['install', '-U', line]) #pip main
+        print(Fore.GREEN + '\n' + 'Plugins installed!')
