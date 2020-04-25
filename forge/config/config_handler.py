@@ -4,16 +4,19 @@ import configparser
 from pathlib import Path
 from typing import List, Tuple
 
-CONF_HOME = str(Path(str(Path.home()) + '/.forge'))
-CONFIG_FILE_PATH = str(Path(CONF_HOME + '/conf.ini'))
+# CONF_HOME = str(Path(str(Path.home()) + '/.forge'))
+# CONFIG_FILE_PATH = str(Path(CONF_HOME + '/conf.ini'))
 
 class ConfigHandler:
     """ Class that handles operations against Forge conf.ini """
-    @staticmethod
-    def init_conf_dir():
+    def __init__(self, home_dir_path: str, file_path_dir: str):
+        self.home_dir_path = home_dir_path
+        self.file_path_dir = file_path_dir
+
+    def init_conf_dir(self):
         """Initializes the conf directory for Forge"""
-        if not os.path.exists(CONF_HOME):
-            os.mkdir(CONF_HOME)
+        if not os.path.exists(self.home_dir_path):
+            os.makedirs(self.home_dir_path)
 
     def init_conf_file(self) -> None:
         """ Initializes the conifiguration file used by Forge """
@@ -21,15 +24,14 @@ class ConfigHandler:
         config['plugin-definitions'] = {}
         config['install-conf'] = {}
             # this is default plugin install location
-        config['install-conf']['pluginlocation'] = str(Path(CONF_HOME + '/plugins'))
-        with open(CONFIG_FILE_PATH, 'w+') as conf_file:
+        config['install-conf']['pluginlocation'] = str(Path(self.home_dir_path + '/plugins'))
+        with open(self.file_path_dir, 'w+') as conf_file:
             config.write(conf_file)
 
 
-    @staticmethod
-    def _get_config_parser() -> configparser.ConfigParser:
+    def _get_config_parser(self) -> configparser.ConfigParser:
         config_parser = configparser.ConfigParser()
-        config_parser.read(CONFIG_FILE_PATH)
+        config_parser.read(self.file_path_dir)
         return config_parser
 
 
@@ -58,5 +60,5 @@ class ConfigHandler:
         plugin_section = config['plugin-definitions']
         plugin_section[name] = url
 
-        with open(CONFIG_FILE_PATH, 'w+') as configfile:
+        with open(self.file_path_dir, 'w+') as configfile:
             config.write(configfile)

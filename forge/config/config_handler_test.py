@@ -2,15 +2,18 @@
 import unittest
 import configparser
 import os
-
+from pathlib import Path
 from .config_handler import ConfigHandler
-from .config_handler import CONFIG_FILE_PATH, CONF_HOME
+
+CONF_HOME = str(Path(str('tmp') + '/.forge'))
+CONFIG_FILE_PATH = str(Path('tmp' + '/conf.ini'))
+
 class ConfigHandlerTest(unittest.TestCase):
     
     def test_write_plugin_to_conf(self):
         name = 'somepluginname'
         url = 'url.for.plugin.git'
-        unit_under_test = ConfigHandler()
+        unit_under_test = ConfigHandler(home_dir_path=CONF_HOME, file_path_dir=CONFIG_FILE_PATH)
         unit_under_test.write_plugin_to_conf(name, url)
 
         parser = configparser.ConfigParser()
@@ -25,7 +28,7 @@ class ConfigHandlerTest(unittest.TestCase):
             self.fail()
 
     def test_read_plugin_entries(self):
-        unit_under_test = ConfigHandler()
+        unit_under_test = ConfigHandler(home_dir_path=CONF_HOME, file_path_dir=CONFIG_FILE_PATH)
         unit_under_test.write_plugin_to_conf('some_name', 'someurl')
         unit_under_test.write_plugin_to_conf('someothername', 'someotherurl')
 
@@ -43,10 +46,14 @@ class ConfigHandlerTest(unittest.TestCase):
     def tearDown(self):
         super().tearDown()
         os.remove(CONFIG_FILE_PATH)
-
+    
     def setUp(self):
         super().setUp()
-        ConfigHandler.init_conf_dir()
+        conf_handler = ConfigHandler(
+                home_dir_path=CONF_HOME,
+                file_path_dir=CONFIG_FILE_PATH
+            )
+        conf_handler.init_conf_dir()
         with open(CONFIG_FILE_PATH, 'w+'): 
-            ConfigHandler().init_conf_file()
+            conf_handler.init_conf_file()
             
