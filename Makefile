@@ -51,4 +51,4 @@ clean:
 	rm -rf forge.egg-info/ build/ dist/ .venv/
 
 type-check:
-	pytype *.py forge/*.py
+	pytype *.py forge

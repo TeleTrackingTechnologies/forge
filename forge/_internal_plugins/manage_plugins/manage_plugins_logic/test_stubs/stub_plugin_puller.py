@@ -1,7 +1,10 @@
 # pylint: disable=all
 from git import GitCommandError
-
-class StubPluginPuller:
+from ..plugin_puller import PluginPuller
+class StubPluginPuller(PluginPuller):
+    def __init__(self, config_handler):
+        super().__init__(config_handler)
+    
     @staticmethod
     def pull_plugin(repo_location, branch_name='dev'):
         """ stub for pull_plugin of PluginPuller."""
@@ -17,7 +20,9 @@ class StubRepo:
     bare = False
 
 
-class StubPluginPullerWithError:
+class StubPluginPullerWithError(PluginPuller):
+    def __init__(self, config_handler):
+        super().__init__(config_handler)
     @staticmethod
     def pull_plugin(repo_location, branch_name='dev'):
         """stub method to raise error on pull."""

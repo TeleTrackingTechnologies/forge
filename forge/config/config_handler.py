@@ -47,7 +47,7 @@ class ConfigHandler:
             plugins.append(str(Path(self.get_plugin_install_location() + '/' + plugin_name)))
         return plugins
 
-    def get_plugin_entries(self) -> List[Tuple[str, configparser.SectionProxy]]:
+    def get_plugin_entries(self) -> List[Tuple[str, str]]:
         """ Parses all of the plugin entries currently installed."""
         config = self._get_config_parser()
         config.sections()
