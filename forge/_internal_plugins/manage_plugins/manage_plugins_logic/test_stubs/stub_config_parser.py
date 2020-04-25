@@ -1,5 +1,5 @@
 # pylint: disable=all
-from .....config.config_handler import ConfigHandler
+from forge.config.config_handler import ConfigHandler
 class StubPluginConfigHandler(ConfigHandler):
     @staticmethod
     def write_plugin_to_conf(name, url):

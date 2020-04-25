@@ -7,8 +7,8 @@ from multiprocessing import Process
 from colorama import init, deinit, Fore
 from git import GitCommandError, GitCommandNotFound, Repo
 from .plugin_puller import PluginPuller
-from ....config.config_handler import ConfigHandler
 from typing import Iterator, Any, List
+from forge.config.config_handler import ConfigHandler
 
 
 

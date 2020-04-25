@@ -6,7 +6,7 @@ class StubPluginPuller(PluginPuller):
         super().__init__(config_handler)
     
     @staticmethod
-    def pull_plugin(repo_location, branch_name='dev'):
+    def pull_plugin(plugin_name, branch_name='dev'):
         """ stub for pull_plugin of PluginPuller."""
         return {}
 
@@ -24,6 +24,6 @@ class StubPluginPullerWithError(PluginPuller):
     def __init__(self, config_handler):
         super().__init__(config_handler)
     @staticmethod
-    def pull_plugin(repo_location, branch_name='dev'):
+    def pull_plugin(plugin_name, branch_name='dev'):
         """stub method to raise error on pull."""
         raise GitCommandError('test', None)
