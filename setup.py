@@ -28,6 +28,8 @@ setup(name='tele-forge',
           'Operating System :: OS Independent'
       ],
       python_requires='>=3.7',
-      scripts=['bin/forge'],
+      scripts=[
+          'bin/forge',
+          'bin/forge.bat'],
       zip_safe=False
       )
