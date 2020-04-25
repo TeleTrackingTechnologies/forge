@@ -70,8 +70,23 @@ $ forge
 ```
 should return the simple help interface.
 
-<!-- // TODO: Update Install Instructions for PyPI
-### Via PyPI -->
+### Via PyPI
+
+```
+$ pip3 install tele-forge
+```
+
+To verify your installation was successful:
+```
+$ which forge
+```
+should return the installed location of forge and:
+```
+$ forge
+```
+should return the simple help interface.
+
+
 
 
 ## Usage

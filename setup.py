@@ -3,7 +3,7 @@ from setuptools import setup
 from pathlib import Path
 
 setup(name='tele-forge',
-      version='0.0.1',
+      version='0.0.2',
       description='convenient cli with extendable collection of useful plugins',
       url='https://github.com/TeleTrackingTechnologies/forge',
       author='Brandon Horn, Kenneth Poling, Paul Verardi, Cameron Tucker, Clint Wadley',
