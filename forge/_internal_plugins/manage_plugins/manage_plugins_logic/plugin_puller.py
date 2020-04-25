@@ -14,7 +14,6 @@ class PluginPuller:
         """Updates plugin by executing a git pull from its install location"""
         repo = str(Path(f'{self.config_handler.get_plugin_install_location()}/{plugin_name}'))
         repo = Git(repo).pull('origin', branch_name)
-        self._install_dependencies(plugin_name)
         return repo
 
 
@@ -27,10 +26,3 @@ class PluginPuller:
         )
         self._install_dependencies(plugin_name)
         return repo
-
-    def _install_dependencies(self, name):
-        print(Fore.GREEN + '\n' + "Installing plugin dependencies...")
-        plugin_location = str(Path(f'{self.config_handler.get_plugin_install_location()}/{name}'))
-        with open(Path(f'{plugin_location}/requirements.txt')) as requirements_file:
-            for line in requirements_file:
-                subprocess.call(['pip3', 'install', '-U', line])

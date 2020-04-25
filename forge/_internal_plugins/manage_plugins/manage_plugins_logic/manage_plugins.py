@@ -7,17 +7,20 @@ from multiprocessing import Process
 from colorama import init, deinit, Fore
 from git import GitCommandError
 from git import GitCommandNotFound
+from .plugin_puller import PluginPuller
+from ....config.config_handler import ConfigHandler
+from typing import Iterator
 
 
 
 class ManagePlugins:
     """ Manage Plugins """
-    def __init__(self, plugin_puller, config_handler):
+    def __init__(self, plugin_puller: PluginPuller, config_handler: ConfigHandler) -> None:
         self.arg_parser = self.init_arg_parser()
         self.plugin_puller = plugin_puller
         self.config_handler = config_handler
 
-    def execute(self, args):
+    def execute(self, args: list) -> None:
         """ Execute """
         parsed_args = self.arg_parser.parse_args(args)
         self.validate_args(parsed_args)
@@ -32,7 +35,7 @@ class ManagePlugins:
             self._do_init(parsed_args, spinner_process)
 
     @staticmethod
-    def init_arg_parser():
+    def init_arg_parser() -> argparse.ArgumentParser:
         """ Initialize Argument Parser """
         parser = argparse.ArgumentParser(
             prog='forge manage-plugins',
@@ -80,7 +83,7 @@ class ManagePlugins:
         return parser
 
     @staticmethod
-    def handle_error(message, spinner):
+    def handle_error(message: str, spinner: Iterator[_T]): 
         """ Class Level Error Handling """
         init(autoreset=True)
         spinner.terminate()
@@ -93,7 +96,7 @@ class ManagePlugins:
         return self.plugin_puller.clone_plugin(url, name, branch_name)
 
     @staticmethod
-    def show_spinner():
+    def show_spinner() -> None:
         """ Graphical Spinner on CLI """
         spinner = itertools.cycle('-/|\\')
         while True:

@@ -3,6 +3,7 @@
 import sys
 import os
 from pathlib import Path
+from typing import List, Any
 from pluginbase import PluginBase
 from tabulate import tabulate
 from .config.config_handler import ConfigHandler
@@ -13,7 +14,7 @@ INTERNAL_PLUGIN_PATH = str(Path(f'{WORKING_DIR}/_internal_plugins/manage_plugins
 
 class Application:
     """ Application Class """
-    def __init__(self, name, config_handler):
+    def __init__(self, name: str, config_handler: ConfigHandler) -> None:
         config_handler.init_conf_dir()
         config_handler.init_conf_file()
         self.name = name
@@ -32,25 +33,25 @@ class Application:
             if callable(getattr(plugin, "register", None)):
                 plugin.register(self)
 
-    def register_plugin(self, name, plugin, helptext):
+    def register_plugin(self, name: str, plugin, helptext: str) -> None:
         """A function a plugin can use to register itself."""
         self.registry[name] = (plugin, helptext)
 
-    def print_help(self):
+    def print_help(self) -> None:
         """ Print Help For All Registered Plugins """
         help_entries = []
         for name in self.registry:
             help_entries.append([name, self.registry[name][1]])
         print(tabulate(help_entries, ['function', 'blurb']))
 
-    def execute(self, command, args):
+    def execute(self, command: str, args: Any) -> None:
         """ Execute Plugin """
         if command == 'help':
             self.print_help()
         else:
             self.registry[command][0](args)
 
-def main(args):
+def main(args: list) -> None:
     """ Main Function Definition """
     if len(args) > 1:
         Application('forge', ConfigHandler()).execute(args[0], args[1:])

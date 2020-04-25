@@ -1,0 +1,15 @@
+rule infer
+  command = /Users/kennethpoling/dev/github/forge/.venv/bin/python3.7 -m pytype.single --imports_info $imports --module-name $module -V 3.7 -o $out --no-report-errors --nofail --quick $in
+  description = infer $module
+rule check
+  command = /Users/kennethpoling/dev/github/forge/.venv/bin/python3.7 -m pytype.single --imports_info $imports --module-name $module -V 3.7 -o $out --analyze-annotated --nofail --quick $in
+  description = check $module
+build /Users/kennethpoling/dev/github/forge/.pytype/pyi/setup.pyi: check /Users/kennethpoling/dev/github/forge/setup.py
+  imports = /Users/kennethpoling/dev/github/forge/.pytype/imports/setup.imports
+  module = setup
+build /Users/kennethpoling/dev/github/forge/.pytype/pyi/forge/config/config_handler.pyi: infer /Users/kennethpoling/dev/github/forge/forge/config/config_handler.py
+  imports = /Users/kennethpoling/dev/github/forge/.pytype/imports/forge.config.config_handler.imports
+  module = forge.config.config_handler
+build /Users/kennethpoling/dev/github/forge/.pytype/pyi/forge/__init__.pyi: check /Users/kennethpoling/dev/github/forge/forge/__init__.py | /Users/kennethpoling/dev/github/forge/.pytype/pyi/forge/config/config_handler.pyi
+  imports = /Users/kennethpoling/dev/github/forge/.pytype/imports/forge.__init__.imports
+  module = forge.__init__
