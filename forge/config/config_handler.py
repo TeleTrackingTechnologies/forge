@@ -23,7 +23,7 @@ class ConfigHandler:
             config['install-conf'] = {}
              # this is default plugin install location
             config['install-conf']['pluginlocation'] = str(Path(CONF_HOME + '/plugins'))
-            with open(CONFIG_FILE_PATH, 'w') as conf_file:
+            with open(CONFIG_FILE_PATH, 'w+') as conf_file:
                 config.write(conf_file)
 
 
