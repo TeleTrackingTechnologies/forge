@@ -1,5 +1,6 @@
 """ Setup """
 from setuptools import setup
+from pathlib import Path
 
 setup(name='tele-forge',
       version='0.0.1',
@@ -28,5 +29,6 @@ setup(name='tele-forge',
       ],
       python_requires='>=3.7',
       scripts=['bin/forge'],
+      data_files=[('Path(str(Path.home()) + '/.forge')', []),
       zip_safe=False
       )
