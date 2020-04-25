@@ -58,5 +58,6 @@ class ConfigHandler:
         config = self._get_config_parser()
         plugin_section = config['plugin-definitions']
         plugin_section[name] = url
-        with open(CONFIG_FILE_PATH, 'w') as configfile:
+
+        with open(CONFIG_FILE_PATH, 'w+') as configfile:
             config.write(configfile)
