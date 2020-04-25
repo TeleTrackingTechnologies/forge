@@ -18,13 +18,12 @@ class ConfigHandler:
     def init_conf_file(self) -> None:
         """ Initializes the conifiguration file used by Forge """
         config = self._get_config_parser()
-        if not os.path.exists(CONFIG_FILE_PATH):
-            config['plugin-definitions'] = {}
-            config['install-conf'] = {}
-             # this is default plugin install location
-            config['install-conf']['pluginlocation'] = str(Path(CONF_HOME + '/plugins'))
-            with open(CONFIG_FILE_PATH, 'w+') as conf_file:
-                config.write(conf_file)
+        config['plugin-definitions'] = {}
+        config['install-conf'] = {}
+            # this is default plugin install location
+        config['install-conf']['pluginlocation'] = str(Path(CONF_HOME + '/plugins'))
+        with open(CONFIG_FILE_PATH, 'w+') as conf_file:
+            config.write(conf_file)
 
 
     @staticmethod

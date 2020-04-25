@@ -4,6 +4,7 @@ from pathlib import Path
 CONF_HOME = str(Path(str(Path.home()) + '/.forge'))
 CONFIG_FILE_PATH = '/conf.ini'
 
+
 setup(name='tele-forge',
       version='0.0.1',
       description='convenient cli with extendable collection of useful plugins',
