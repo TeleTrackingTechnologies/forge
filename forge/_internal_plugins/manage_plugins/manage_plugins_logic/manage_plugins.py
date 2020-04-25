@@ -5,22 +5,24 @@ import itertools
 import re
 from multiprocessing import Process
 from colorama import init, deinit, Fore
-from git import GitCommandError
-from git import GitCommandNotFound
+from git import GitCommandError, GitCommandNotFound, Repo
+from .plugin_puller import PluginPuller
+from typing import Iterator, Any, List
+from forge.config.config_handler import ConfigHandler
 
 
 
 class ManagePlugins:
     """ Manage Plugins """
-    def __init__(self, plugin_puller, config_handler):
+    def __init__(self, plugin_puller: PluginPuller, config_handler: ConfigHandler) -> None:
         self.arg_parser = self.init_arg_parser()
         self.plugin_puller = plugin_puller
         self.config_handler = config_handler
 
-    def execute(self, args):
+    def execute(self, args: list) -> None:
         """ Execute """
-        parsed_args = self.arg_parser.parse_args(args)
-        self.validate_args(parsed_args)
+        parsed_args = self.arg_parser.parse_args(args=args)
+        self.validate_args(parsed_args=parsed_args)
 
         spinner_process = Process(target=self.show_spinner)
         spinner_process.start()
@@ -32,7 +34,7 @@ class ManagePlugins:
             self._do_init(parsed_args, spinner_process)
 
     @staticmethod
-    def init_arg_parser():
+    def init_arg_parser() -> argparse.ArgumentParser:
         """ Initialize Argument Parser """
         parser = argparse.ArgumentParser(
             prog='forge manage-plugins',
@@ -80,7 +82,7 @@ class ManagePlugins:
         return parser
 
     @staticmethod
-    def handle_error(message, spinner):
+    def handle_error(message: str, spinner: Process) -> None:
         """ Class Level Error Handling """
         init(autoreset=True)
         spinner.terminate()
@@ -88,12 +90,12 @@ class ManagePlugins:
         deinit()
         sys.exit(1)
 
-    def pull_plugin(self, url, name, branch_name):
+    def pull_plugin(self, url: str, name: str, branch_name: str) -> Repo:
         """ Pull Plugin from Git """
         return self.plugin_puller.clone_plugin(url, name, branch_name)
 
     @staticmethod
-    def show_spinner():
+    def show_spinner() -> None:
         """ Graphical Spinner on CLI """
         spinner = itertools.cycle('-/|\\')
         while True:
@@ -102,7 +104,7 @@ class ManagePlugins:
             sys.stdout.write('\b')
 
     @staticmethod
-    def pull_name_from_url(url):
+    def pull_name_from_url(url: str) -> Any:
         """ Extract Plugin Name from Git URL """
         match = re.search(r'[\s]*\/(forge-[A-Za-z1-9]+)[\s]*', url)
 
@@ -111,75 +113,99 @@ class ManagePlugins:
 
         return None
 
-    def validate_args(self, parsed_args):
+    def validate_args(self, parsed_args: argparse.Namespace) -> None:
         """Validates passed in args, the presence of some args makes other args required."""
         action = parsed_args.action_type
         if action == 'ADD':
-            self._validate_add_action(parsed_args)
+            self._validate_add_action(args=parsed_args)
         elif action is None:
             print(Fore.RED + '\n' +
                   'Please provide an action with -a, -u or -i')
             sys.exit(1)
 
     @staticmethod
-    def _validate_add_action(args):
+    def _validate_add_action(args: argparse.Namespace) -> None:
         if args.repo_url is None:
             print(Fore.RED + '\n' +
                   'Cant add plugin without providing url!')
             sys.exit(1)
 
-    def _do_add(self, args, spinner):
-        name = self.pull_name_from_url(args.repo_url)
+    def _do_add(self, args: argparse.Namespace, spinner: Process) -> None:
+        name = self.pull_name_from_url(url=args.repo_url)
         if name is None:
             self.handle_error(
-                'Repository name should be in the form of forge-[alphanumeric name]', spinner
+                message='Repository name should be in the form of forge-[alphanumeric name]', spinner=spinner
             )
         repo = None
         print("Pulling plugin source...")
         try:
-            repo = self.pull_plugin(args.repo_url, name, args.branch_name)
+            repo = self.pull_plugin(url=args.repo_url, name=name, branch_name=args.branch_name)
             if repo.bare:
-                self.handle_error('Plugin repository contained no source code...', spinner)
+                self.handle_error(
+                    message='Plugin repository contained no source code...',
+                    spinner=spinner
+                )
         except GitCommandError as err:
-            self.handle_error(f'Could not pull plugin {err}', spinner)
+            self.handle_error(
+                message=f'Could not pull plugin {err}',
+                spinner=spinner
+            )
         print(Fore.GREEN + '\n' + "Pulled plugin source, configuring for use...")
-        self.config_handler.write_plugin_to_conf(name, args.repo_url)
+        self.config_handler.write_plugin_to_conf(
+            name=name,
+            url=args.repo_url
+        )
         spinner.terminate()
         print(Fore.GREEN + '\n' + 'Plugin ready for use!')
 
-    def _do_update(self, args, spinner):
+    def _do_update(self, args: argparse.Namespace, spinner: Process) -> None:
         if args.plugin_name:
             try:
                 self.plugin_puller.pull_plugin(
-                    args.plugin_name, args.branch_name
+                    plugin_name=args.plugin_name,
+                    branch_name=args.branch_name
                 )
                 print(Fore.GREEN + '\n' + 'Plugin updated!')
             except GitCommandError as err:
-                self.handle_error(f'Could not update plugin {err}', spinner)
+                self.handle_error(
+                    message=f'Could not update plugin {err}',
+                    spinner=spinner
+                )
             except GitCommandNotFound as err:
                 self.handle_error(
-                    f'Could not update plugin, most likely caused by providing an invalid name.'
-                    , spinner
+                    message=f'Could not update plugin, most' \
+                    'likely caused by providing an invalid name.',
+                    spinner=spinner
                 )
         else:
             for name in self.config_handler.get_plugin_entries():
                 print(f'Updating {name}...')
                 try:
                     self.plugin_puller.pull_plugin(
-                        name,
-                        args.branch_name
+                        plugin_name=name,
+                        branch_name=args.branch_name
                     )
                 except GitCommandError as err:
-                    self.handle_error(f'Could not update plugin {name} :  {err}', spinner)
+                    self.handle_error(
+                        message=f'Could not update plugin {name} :  {err}',
+                        spinner=spinner
+                    )
         spinner.terminate()
         print(Fore.GREEN + '\n' + 'Plugin(s) updated!')
 
-    def _do_init(self, args, spinner):
+    def _do_init(self, args: argparse.Namespace, spinner: Process):
         for(name, url) in self.config_handler.get_plugin_entries():
             print(f'Installing {name}...')
             try:
-                self.plugin_puller.clone_plugin(url, name, args.branch_name)
+                self.plugin_puller.clone_plugin(
+                    repo_url=url,
+                    plugin_name=name,
+                    branch_name=args.branch_name
+                )
             except GitCommandError as err:
-                self.handle_error(f'Could not install plugin {name} :  {err}', spinner)
+                self.handle_error(
+                    message=f'Could not install plugin {name} :  {err}',
+                    spinner=spinner
+                )
         spinner.terminate()
         print(Fore.GREEN + '\n' + 'Plugins installed!')

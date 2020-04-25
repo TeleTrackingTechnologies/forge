@@ -1,5 +1,6 @@
 """ Setup """
 from setuptools import setup
+from pathlib import Path
 
 setup(name='tele-forge',
       version='0.0.1',

@@ -1,5 +1,6 @@
 # pylint: disable=all
-class StubPluginConfigHandler:
+from forge.config.config_handler import ConfigHandler
+class StubPluginConfigHandler(ConfigHandler):
     @staticmethod
     def write_plugin_to_conf(name, url):
         print('stub writing to file')

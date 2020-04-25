@@ -4,7 +4,7 @@ import configparser
 import os
 
 from .config_handler import ConfigHandler
-from .config_handler import CONFIG_FILE_PATH
+from .config_handler import CONFIG_FILE_PATH, CONF_HOME
 class ConfigHandlerTest(unittest.TestCase):
     
     def test_write_plugin_to_conf(self):
@@ -45,6 +45,8 @@ class ConfigHandlerTest(unittest.TestCase):
         os.remove(CONFIG_FILE_PATH)
 
     def setUp(self):
-        super().setUp()   
-        ConfigHandler().init_conf_file()
+        super().setUp()
+        ConfigHandler.init_conf_dir()
+        with open(CONFIG_FILE_PATH, 'w+'): 
+            ConfigHandler().init_conf_file()
             

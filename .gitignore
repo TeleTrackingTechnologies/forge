@@ -4,7 +4,7 @@
 
 # Development Directories
 .venv
-
+.pytype
 # Build Info
 *.egg-info
 build
