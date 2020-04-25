@@ -2,7 +2,7 @@
 from setuptools import setup
 from pathlib import Path
 CONF_HOME = str(Path(str(Path.home()) + '/.forge'))
-CONFIG_FILE_PATH = str(Path(CONF_HOME + '/conf.ini'))
+CONFIG_FILE_PATH = '/conf.ini'
 
 setup(name='tele-forge',
       version='0.0.1',
@@ -31,6 +31,6 @@ setup(name='tele-forge',
       ],
       python_requires='>=3.7',
       scripts=['bin/forge'],
-      data_files=[CONF_HOME, CONFIG_FILE_PATH],
+      data_files=[(CONF_HOME, [])],
       zip_safe=False
       )
