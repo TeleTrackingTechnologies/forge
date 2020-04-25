@@ -6,7 +6,6 @@ chardet==3.0.4
 colorama==0.4.3
 cryptography==2.9.2
 decorator==4.4.2
--e git+git@github.com:kepoling/forge.git@26a366d9aaef79aaa9c9e931c2cc081811b820fe#egg=forge
 gitdb==4.0.4
 GitPython==3.1.1
 idna==2.9
