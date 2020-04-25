@@ -134,7 +134,8 @@ class ManagePlugins:
         name = self.pull_name_from_url(url=args.repo_url)
         if name is None:
             self.handle_error(
-                message='Repository name should be in the form of forge-[alphanumeric name]', spinner=spinner
+                message='Repository name should be in the form of forge-[alphanumeric name]',
+                spinner=spinner
             )
         repo = None
         print("Pulling plugin source...")

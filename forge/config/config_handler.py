@@ -21,12 +21,13 @@ class ConfigHandler:
     def init_conf_file(self) -> None:
         """ Initializes the conifiguration file used by Forge """
         config = self._get_config_parser()
-        config['plugin-definitions'] = {}
-        config['install-conf'] = {}
-            # this is default plugin install location
-        config['install-conf']['pluginlocation'] = str(Path(self.home_dir_path + '/plugins'))
-        with open(self.file_path_dir, 'w+') as conf_file:
-            config.write(conf_file)
+        if not os.path.exists(self.file_path_dir):
+            config['plugin-definitions'] = {}
+            config['install-conf'] = {}
+                # this is default plugin install location
+            config['install-conf']['pluginlocation'] = str(Path(self.home_dir_path + '/plugins'))
+            with open(self.file_path_dir, 'w') as conf_file:
+                config.write(conf_file)
 
 
     def _get_config_parser(self) -> configparser.ConfigParser:
@@ -60,5 +61,5 @@ class ConfigHandler:
         plugin_section = config['plugin-definitions']
         plugin_section[name] = url
 
-        with open(self.file_path_dir, 'w+') as configfile:
+        with open(self.file_path_dir, 'w') as configfile:
             config.write(configfile)

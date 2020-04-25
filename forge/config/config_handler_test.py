@@ -54,6 +54,5 @@ class ConfigHandlerTest(unittest.TestCase):
                 file_path_dir=CONFIG_FILE_PATH
             )
         conf_handler.init_conf_dir()
-        with open(CONFIG_FILE_PATH, 'w+'): 
-            conf_handler.init_conf_file()
+        conf_handler.init_conf_file()
             
