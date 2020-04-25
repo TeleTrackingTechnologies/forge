@@ -41,8 +41,8 @@ build:
 
 install: build
 	( \
-	pip3 install dist/forge-${VERSION}-py3-none-any.whl; \
-    )
+	  pip3 install dist/forge-${VERSION}-py3-none-any.whl; \
+  )
 
 test:
 	python -m unittest discover -s forge -p '*_test.py'

@@ -1,7 +1,7 @@
 """ Setup """
 from setuptools import setup
 
-setup(name='forge',
+setup(name='tele-forge',
       version='0.0.1',
       description='convenient cli with extendable collection of useful plugins',
       url='https://github.com/TeleTrackingTechnologies/forge',
