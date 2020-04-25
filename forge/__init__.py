@@ -8,6 +8,8 @@ from pluginbase import PluginBase
 from tabulate import tabulate
 from .config.config_handler import ConfigHandler
 
+CONF_HOME = str(Path(str(Path.home()) + '/.forge'))
+CONFIG_FILE_PATH = str(Path(CONF_HOME + '/conf.ini'))
 PLUGIN_BASE = PluginBase(package='plugins')
 WORKING_DIR = os.path.dirname(os.path.abspath(__file__))
 INTERNAL_PLUGIN_PATH = str(Path(f'{WORKING_DIR}/_internal_plugins/manage_plugins'))
@@ -54,9 +56,21 @@ class Application:
 def main(args: list) -> None:
     """ Main Function Definition """
     if len(args) > 1:
-        Application('forge', ConfigHandler()).execute(args[0], args[1:])
+        Application(
+            'forge',
+            ConfigHandler(
+                home_dir_path=CONF_HOME,
+                file_path_dir=CONFIG_FILE_PATH
+            )
+        ).execute(args[0], args[1:])
     else:
-        Application('forge', ConfigHandler()).execute('help', None)
+        Application(
+            'forge',
+            ConfigHandler(
+                home_dir_path=CONF_HOME,
+                file_path_dir=CONFIG_FILE_PATH
+            )
+        ).execute('help', None)
 
 
 if __name__ == '__main__':
