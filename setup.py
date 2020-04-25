@@ -30,6 +30,6 @@ setup(name='tele-forge',
       ],
       python_requires='>=3.7',
       scripts=['bin/forge'],
-      data_files=[(CONF_HOME, []),
+      data_files=[CONF_HOME],
       zip_safe=False
       )
