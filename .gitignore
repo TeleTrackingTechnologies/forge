@@ -1,25 +1,17 @@
+# Editor Cruft
 .idea
-venv
-**/__pycache__
+.vscode
 
-### Terraform ###
-# Compiled files
-venv/*
-*.tfstate
-*.tfstate.*
-
-# Module directory
-.terraform/
-ansible/roles/minifi-c2/files/*.jks
-*.pem
-*.zip
-*.pub
-*.retry
-
-__pycache__/
+# Development Directories
+.venv
+.pytype
+# Build Info
+*.egg-info
+build
+dist
+__pycache__
 *.py[cod]
 *$py.class
 
 # OS generated files #
-######################
 .DS_Store
