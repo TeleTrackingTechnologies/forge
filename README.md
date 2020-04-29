@@ -1,14 +1,14 @@
 # forge
 
-There are many adjunct command line utilities that have been created by many [TeleTracking](https://teletracking.com)
+There are many adjunct command line utilities that have been created by many [TeleTracking](https://www.teletracking.com)
 employees to assist with their everyday activities.
 The goal of this tool is to provide an extensible command line utility that will allow
-for anyone to create new plugins for it that will be automatically pulled in by the 
+for anyone to create new plugins for it that will be automatically pulled in by the
 base tool when placed in the proper directory.
 
 In order for a plugin to be used by the utility, a simple contrat must be met and a requirements.txt containing all of the packages required by the plugin must be provided at the root directory of the plugin.
 Each primary plugin file must have an execute method that accepts an array of args,
-a helptext method that returns a very basic explanation of what the module does, 
+a helptext method that returns a very basic explanation of what the module does,
 and a register method that accepts an instance of the app and passes the desired name of
 the plugin, the execute method, and the value returned from the helptext method.
 
