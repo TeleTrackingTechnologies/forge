@@ -34,6 +34,8 @@ As such, it is highly recommended that you install and use forge within a Python
 
 For those not familiar with using a virtual environment, the ability to initialize a simple one is provided within the Makefile of this repository.
 
+If you haven't used Python before, you'll need to [install Python 3](https://docs.python-guide.org/starting/installation/) first. (If you're on a Mac, avoid using the default Python installation.)
+
 In order to activate and use the included virtual environment, proceed with the following steps:
 
 ## Unix
