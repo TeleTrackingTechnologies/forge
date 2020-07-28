@@ -1,5 +1,7 @@
 IMAGE_NAME='Forge'
-VERSION=0.0.1
+VERSION=1.0.0
+PYTHON=python3.7
+
 
 .DEFAULT: help
 help:
@@ -20,8 +22,8 @@ help:
 
 init:
 	rm -rf .venv
-	pip3 install virtualenv
-	virtualenv --python=python3 --always-copy .venv
+	$(PYTHON) -m pip install virtualenv
+	virtualenv --python=$(PYTHON) --always-copy .venv
 	( \
     . .venv/bin/activate; \
     pip3 install -r requirements.txt; \
@@ -35,17 +37,17 @@ lint:
 
 build:
 	( \
-	pip3 install --upgrade setuptools wheel; \
-	python3 setup.py sdist bdist_wheel; \
+	$(PYTHON) -m pip install --upgrade setuptools wheel; \
+	$(PYTHON) setup.py sdist bdist_wheel; \
 	)
 
 install: build
 	( \
-	  pip3 install dist/forge-${VERSION}-py3-none-any.whl; \
+	  $(PYTHON) -m pip install dist/tele_forge-${VERSION}-py3-none-any.whl; \
   )
 
 test:
-	python -m unittest discover -s forge -p '*_test.py'
+	$(PYTHON) -m unittest discover -s forge -p '*_test.py'
 
 clean:
 	rm -rf forge.egg-info/ build/ dist/ .venv/
