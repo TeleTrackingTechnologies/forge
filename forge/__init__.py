@@ -1,12 +1,15 @@
 """ Forge """
 #! /usr/bin/env python3
-import sys
 import os
+import sys
 from pathlib import Path
 from typing import List, Any
+from multiprocessing import freeze_support
+
 from pluginbase import PluginBase
 from tabulate import tabulate
 from .config.config_handler import ConfigHandler
+
 
 CONF_HOME = str(Path(str(Path.home()) + '/.forge'))
 CONFIG_FILE_PATH = str(Path(CONF_HOME + '/conf.ini'))
@@ -14,8 +17,10 @@ PLUGIN_BASE = PluginBase(package='plugins')
 WORKING_DIR = os.path.dirname(os.path.abspath(__file__))
 INTERNAL_PLUGIN_PATH = str(Path(f'{WORKING_DIR}/_internal_plugins/manage_plugins'))
 
+
 class Application:
     """ Application Class """
+
     def __init__(self, name: str, config_handler: ConfigHandler) -> None:
         config_handler.init_conf_dir()
         config_handler.init_conf_file()
@@ -25,7 +30,7 @@ class Application:
         self.plugins = [
             INTERNAL_PLUGIN_PATH,
             config_handler.get_plugin_install_location()
-            ] + config_handler.get_plugins()
+        ] + config_handler.get_plugins()
 
         self.plugin_source = PLUGIN_BASE.make_plugin_source(
             searchpath=self.plugins,
@@ -53,6 +58,7 @@ class Application:
         else:
             self.registry[command][0](args)
 
+
 def main(args: list) -> None:
     """ Main Function Definition """
     if len(args) > 1:
@@ -74,4 +80,5 @@ def main(args: list) -> None:
 
 
 if __name__ == '__main__':
+    freeze_support()
     main(sys.argv[1:])
