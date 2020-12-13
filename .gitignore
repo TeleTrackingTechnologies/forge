@@ -4,6 +4,7 @@
 
 # Development Directories
 .venv
+venv
 .pytype
 # Build Info
 *.egg-info
@@ -15,3 +16,6 @@ __pycache__
 
 # OS generated files #
 .DS_Store
+
+.coverage
+cov_html

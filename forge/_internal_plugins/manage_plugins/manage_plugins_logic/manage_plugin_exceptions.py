@@ -2,8 +2,8 @@
 
 
 class PluginManagementFatalException(Exception):
-    pass
+    """  Exception class for raising during fatal issues """
 
 
 class PluginManagementWarnException(Exception):
-    pass
+    """  Exception class for raising during warning issues """

@@ -19,7 +19,8 @@ setup(name='tele-forge',
           'pluginbase==1.0.0',
           'requests==2.25.0',
           'tabulate==0.8.7',
-          'halo==0.0.31'
+          'halo==0.0.31',
+          'python-slugify==4.0.1'
       ],
       classifiers=[
           'Programming Language :: Python :: 3',

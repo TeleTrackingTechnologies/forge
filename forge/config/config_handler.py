@@ -4,9 +4,6 @@ import configparser
 from pathlib import Path
 from typing import List, Tuple
 
-# CONF_HOME = str(Path(str(Path.home()) + '/.forge'))
-# CONFIG_FILE_PATH = str(Path(CONF_HOME + '/conf.ini'))
-
 
 class ConfigHandler:
     """ Class that handles operations against Forge conf.ini """
@@ -16,9 +13,8 @@ class ConfigHandler:
         self.file_path_dir = file_path_dir
 
     def init_conf_dir(self):
-        """Initializes the conf directory for Forge"""
-        if not os.path.exists(self.home_dir_path):
-            os.makedirs(self.home_dir_path)
+        """ Initializes the conf directory for Forge """
+        os.makedirs(self.home_dir_path, exist_ok=True)
 
     def init_conf_file(self) -> None:
         """ Initializes the conifiguration file used by Forge """
@@ -49,7 +45,7 @@ class ConfigHandler:
         return plugins
 
     def get_plugin_entries(self) -> List[Tuple[str, str]]:
-        """ Parses all of the plugin entries currently installed."""
+        """ Parses all of the plugin entries currently installed """
         config = self._get_config_parser()
         config.sections()
         return config.items('plugin-definitions')

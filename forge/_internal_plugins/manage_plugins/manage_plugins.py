@@ -16,15 +16,18 @@ def execute(args: list) -> None:
         home_dir_path=CONF_HOME,
         file_path_dir=CONFIG_FILE_PATH
     )
-    manage_plugins_logic = ManagePlugins(PluginPuller(config_handler), config_handler)
-    manage_plugins_logic.execute(args)
+    manage_plugins_logic = ManagePlugins(
+        plugin_puller=PluginPuller(config_handler),
+        config_handler=config_handler
+    )
+    manage_plugins_logic.execute(args=args)
 
 
 def helptext() -> str:
     """ Simple Helptext For Plugin """
-    return "For managing plugins for use by forge."
+    return 'For managing plugins for use by forge.'
 
 
 def register(app) -> None:
     """ Plugin Registration """
-    app.register_plugin('manage-plugins', execute, helptext())
+    app.register_plugin(name='manage-plugins', plugin=execute, helptext=helptext())

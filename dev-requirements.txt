@@ -1,0 +1,7 @@
+pylint==2.6.0
+pytest==6.1.2
+pytest-randomly==3.5.0
+pytest-repeat==0.9.1
+pytest-cov==2.10.1
+mock==4.0.2
+twine==1.13.0

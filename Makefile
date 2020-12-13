@@ -29,28 +29,41 @@ init:
     pip3 install -r requirements.txt; \
     )
 
-lint:
+dev: init
 	( \
     . .venv/bin/activate; \
-    pylint -j 4 --rcfile=pylintrc forge; \
+    pip3 install -r dev-requirements.txt; \
+    )
+
+
+lint: dev
+	( \
+    . .venv/bin/activate; \
+    $(PYTHON) -m pylint -j 4 -r y forge; \
     )
 
 build:
 	( \
+	. .venv/bin/activate; \
 	$(PYTHON) -m pip install --upgrade setuptools wheel; \
 	$(PYTHON) setup.py sdist bdist_wheel; \
 	)
 
 install: build
 	( \
-	  $(PYTHON) -m pip install dist/tele_forge-${VERSION}-py3-none-any.whl; \
-  )
+	. .venv/bin/activate; \
+	$(PYTHON) -m pip install dist/tele_forge-${VERSION}-py3-none-any.whl; \
+  	)
 
-test:
-	$(PYTHON) -m unittest discover -s forge -p '*_test.py'
+test: lint
+	( \
+    . .venv/bin/activate; \
+	$(PYTHON) -m pytest -rf -vvv -x --count 5 --cov=forge --cov-fail-under=80 --cov-report term; \
+    )
+
 
 clean:
-	rm -rf forge.egg-info/ build/ dist/ .venv/
+	rm -rf forge.egg-info/ build/ dist/ .venv/ venv/
 
 type-check:
 	pytype *.py forge
