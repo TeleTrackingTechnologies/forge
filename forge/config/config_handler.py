@@ -7,8 +7,10 @@ from typing import List, Tuple
 # CONF_HOME = str(Path(str(Path.home()) + '/.forge'))
 # CONFIG_FILE_PATH = str(Path(CONF_HOME + '/conf.ini'))
 
+
 class ConfigHandler:
     """ Class that handles operations against Forge conf.ini """
+
     def __init__(self, home_dir_path: str, file_path_dir: str):
         self.home_dir_path = home_dir_path
         self.file_path_dir = file_path_dir
@@ -24,22 +26,19 @@ class ConfigHandler:
         if not os.path.exists(self.file_path_dir):
             config['plugin-definitions'] = {}
             config['install-conf'] = {}
-                # this is default plugin install location
+            # this is default plugin install location
             config['install-conf']['pluginlocation'] = str(Path(self.home_dir_path + '/plugins'))
             with open(self.file_path_dir, 'w') as conf_file:
                 config.write(conf_file)
-
 
     def _get_config_parser(self) -> configparser.ConfigParser:
         config_parser = configparser.ConfigParser()
         config_parser.read(self.file_path_dir)
         return config_parser
 
-
     def get_plugin_install_location(self) -> str:
         """ Returns the configured location for plugin installations """
         return self._get_config_parser()['install-conf']['pluginlocation']
-
 
     def get_plugins(self) -> List[str]:
         """ Parse Plugin Configuration File """

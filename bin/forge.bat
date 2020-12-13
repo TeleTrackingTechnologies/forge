@@ -1,2 +1,2 @@
 @Echo off
-python %~dp0forge
+python %~dp0forge %*

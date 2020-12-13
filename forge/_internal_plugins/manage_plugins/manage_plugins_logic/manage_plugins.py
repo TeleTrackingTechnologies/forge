@@ -1,21 +1,27 @@
 """ Manage Plugins Internally """
 import argparse
-import sys
-import itertools
+import os
 import re
-from multiprocessing import Process
-from colorama import init, deinit, Fore
-from git import GitCommandError, GitCommandNotFound, Repo
-from .plugin_puller import PluginPuller
-from typing import Iterator, Any, List
-from forge.config.config_handler import ConfigHandler
+import subprocess
+import sys
+from typing import Any
 
+from colorama import Fore, deinit, init
+from forge.config.config_handler import ConfigHandler
+from git import GitCommandError, GitCommandNotFound, Repo
+from halo import Halo
+
+from .command_line_parser import init_arg_parser
+from .manage_plugin_exceptions import (PluginManagementFatalException,
+                                       PluginManagementWarnException)
+from .plugin_puller import PluginPuller
 
 
 class ManagePlugins:
     """ Manage Plugins """
+
     def __init__(self, plugin_puller: PluginPuller, config_handler: ConfigHandler) -> None:
-        self.arg_parser = self.init_arg_parser()
+        self.arg_parser = init_arg_parser()
         self.plugin_puller = plugin_puller
         self.config_handler = config_handler
 
@@ -24,94 +30,31 @@ class ManagePlugins:
         parsed_args = self.arg_parser.parse_args(args=args)
         self.validate_args(parsed_args=parsed_args)
 
-        spinner_process = Process(target=self.show_spinner)
-        spinner_process.start()
-        if parsed_args.action_type == 'ADD':
-            self._do_add(parsed_args, spinner_process)
-        elif parsed_args.action_type == 'UPDATE':
-            self._do_update(parsed_args, spinner_process)
-        elif parsed_args.action_type == 'INIT':
-            self._do_init(parsed_args, spinner_process)
-
-    @staticmethod
-    def init_arg_parser() -> argparse.ArgumentParser:
-        """ Initialize Argument Parser """
-        parser = argparse.ArgumentParser(
-            prog='forge manage-plugins',
-            description='Tool to allow users to configure their '
-                        'anvil installations with plugins. Provides '
-                        'the ability to add plugins via a repo reference '
-                        'and the ability to update all plugins currently installed. '
-                        'See -h for more information.')
-        parser.add_argument('-a', '--add',
-                            action='store_const',
-                            dest='action_type',
-                            const='ADD',
-                            required=False,
-                            help='Add a new plugin')
-
-        parser.add_argument('-u', '--update',
-                            action='store_const',
-                            dest='action_type',
-                            const='UPDATE',
-                            required=False,
-                            help='Updates named plugin (via -n) or all plugins if -n not '
-                                 'provided')
-        parser.add_argument('-i', '--init',
-                            action='store_const',
-                            dest='action_type',
-                            const='INIT',
-                            required=False,
-                            help='Initializes Forge based on an existing plugin conf.ini.')
-        parser.add_argument('-r', '--repo',
-                            action='store',
-                            dest='repo_url',
-                            required=False,
-                            help='Url to git repo containing plugin source. '
-                                 'NOTE it must refer to the clone URL, not the browser URL.')
-        parser.add_argument('-b', '--branch',
-                            action='store',
-                            dest='branch_name',
-                            required=False,
-                            help='Optionally pass the branch name for the plugin.')
-        parser.add_argument('-n', '--name',
-                            action='store',
-                            dest='plugin_name',
-                            required=False,
-                            help='The exact name of the plugin.')
-        return parser
-
-    @staticmethod
-    def handle_error(message: str, spinner: Process) -> None:
-        """ Class Level Error Handling """
         init(autoreset=True)
-        spinner.terminate()
-        print(Fore.RED + '\n' + message)
-        deinit()
-        sys.exit(1)
 
-    def pull_plugin(self, url: str, name: str, branch_name: str) -> Repo:
-        """ Pull Plugin from Git """
-        return self.plugin_puller.clone_plugin(url, name, branch_name)
+        try:
+            if parsed_args.action_type == 'ADD':
+                self._do_add(parsed_args)
+            elif parsed_args.action_type == 'UPDATE':
+                self._do_update(parsed_args)
+            elif parsed_args.action_type == 'INIT':
+                self._do_init(parsed_args)
 
-    @staticmethod
-    def show_spinner() -> None:
-        """ Graphical Spinner on CLI """
-        spinner = itertools.cycle('-/|\\')
-        while True:
-            sys.stdout.write(next(spinner))
-            sys.stdout.flush()
-            sys.stdout.write('\b')
+        except PluginManagementFatalException:
+            sys.exit(1)
+        except PluginManagementWarnException:
+            sys.exit(0)
+
+        finally:
+            deinit()
 
     @staticmethod
     def pull_name_from_url(url: str) -> Any:
         """ Extract Plugin Name from Git URL """
-        match = re.search(r'[\s]*\/(forge-[A-Za-z1-9]+)[\s]*', url)
-
-        if match:
-            return match.group(1)
-
-        return None
+        match = re.search(r'[\s]*\/(forge(?:-[A-Za-z1-9]*)+)[\s]*', url)
+        if not match:
+            handle_error('Repository name should be in the form of forge-[alphanumeric name]')
+        return match.group(1)
 
     def validate_args(self, parsed_args: argparse.Namespace) -> None:
         """Validates passed in args, the presence of some args makes other args required."""
@@ -119,94 +62,106 @@ class ManagePlugins:
         if action == 'ADD':
             self._validate_add_action(args=parsed_args)
         elif action is None:
-            print(Fore.RED + '\n' +
-                  'Please provide an action with -a, -u or -i')
-            sys.exit(1)
+            handle_error('Please provide an action with -a, -u or -i')
 
     @staticmethod
     def _validate_add_action(args: argparse.Namespace) -> None:
         if args.repo_url is None:
-            print(Fore.RED + '\n' +
-                  'Cant add plugin without providing url!')
-            sys.exit(1)
+            handle_error('Cant add plugin without providing url!')
 
-    def _do_add(self, args: argparse.Namespace, spinner: Process) -> None:
+    def _clone_plugin_step(self, name, args) -> None:
+        """ Clones plugin source code into forge folder """
+        with Halo(text='Cloning source code...', spinner='dots', color='blue') as spinner:
+            try:
+                repo = self.plugin_puller.clone_plugin(repo_url=args.repo_url, plugin_name=name, branch_name=args.branch_name)
+                spinner.succeed("Cloned plugin source code!")
+
+            except PluginManagementFatalException as err:
+                spinner.fail('Could not clone plugin! ' + str(err))
+                raise err from None
+
+            except PluginManagementWarnException as err:
+                spinner.warn(str(err))
+                raise err from None
+
+    def _configure_plugin_step(self, args) -> None:
+        """ Configures plugin for use by forge """
         name = self.pull_name_from_url(url=args.repo_url)
-        if name is None:
-            self.handle_error(
-                message='Repository name should be in the form of forge-[alphanumeric name]',
-                spinner=spinner
+        with Halo(text='Configuring plugin for use...', spinner='dots', color='blue') as spinner:
+            self.config_handler.write_plugin_to_conf(
+                name=name,
+                url=args.repo_url
             )
-        repo = None
-        print("Pulling plugin source...")
-        try:
-            repo = self.pull_plugin(url=args.repo_url, name=name, branch_name=args.branch_name)
-            if repo.bare:
-                self.handle_error(
-                    message='Plugin repository contained no source code...',
-                    spinner=spinner
-                )
-        except GitCommandError as err:
-            self.handle_error(
-                message=f'Could not pull plugin {err}',
-                spinner=spinner
-            )
-        print(Fore.GREEN + '\n' + "Pulled plugin source, configuring for use...")
-        self.config_handler.write_plugin_to_conf(
-            name=name,
-            url=args.repo_url
-        )
-        spinner.terminate()
-        print(Fore.GREEN + '\n' + 'Plugin ready for use!')
+            spinner.succeed(f"Plugin configured!")
 
-    def _do_update(self, args: argparse.Namespace, spinner: Process) -> None:
+    def _pull_plugin_step(self, name: str, args: argparse.Namespace) -> None:
+        """ Pulls plugin source code into forge folder """
+
+        with Halo(text=f'Updating plugin: [{name}]...', spinner='dots', color='blue') as spinner:
+            try:
+                repo = self.plugin_puller.pull_plugin(plugin_name=name, branch_name=args.branch_name)
+                spinner.succeed(text=f"Plugin: [{name}] updated!")
+
+            except PluginManagementFatalException as err:
+                spinner.fail(f'Could not update plugin: [{name}]! {str(err)}')
+                raise err from None
+
+            except PluginManagementWarnException:
+                spinner.succeed(f'Plugin: [{name}] already up to date!')
+
+    def _install_dependencies(self) -> None:
+        """ Installs all dependencies required by all plugins """
+        with Halo(text='Installing plugin dependencies...', spinner='dots', color='blue') as spinner:
+            for plugin_path in self.config_handler.get_plugins():
+                req_file = os.path.join(plugin_path, 'requirements.txt')
+                if os.path.exists(req_file):
+                    with open(os.devnull, 'wb') as devnull:
+                        subprocess.check_call(f'{sys.executable} -m pip install -r {req_file}'.split(), stdout=devnull, stderr=subprocess.STDOUT)
+            spinner.succeed(f"Plugin dependencies installed!")
+
+    def _do_add(self, args: argparse.Namespace) -> None:
+        print('Installing plugin...')
+
+        name = self.pull_name_from_url(url=args.repo_url)
+
+        self._clone_plugin_step(name=name, args=args)
+        self._configure_plugin_step(args=args)
+        self._install_dependencies()
+
+        with Halo(text='Finishing up...', spinner='dots', color='blue') as spinner:
+            spinner.succeed('Plugin installed and ready for use!')
+
+    def _do_update(self, args: argparse.Namespace) -> None:
+        print('Updating plugins...')
         if args.plugin_name:
-            try:
-                self.plugin_puller.pull_plugin(
-                    plugin_name=args.plugin_name,
-                    branch_name=args.branch_name
-                )
-                print(Fore.GREEN + '\n' + 'Plugin updated!')
-            except GitCommandError as err:
-                self.handle_error(
-                    message=f'Could not update plugin {err}',
-                    spinner=spinner
-                )
-            except GitCommandNotFound as err:
-                self.handle_error(
-                    message=f'Could not update plugin, most' \
-                    'likely caused by providing an invalid name.',
-                    spinner=spinner
-                )
+            self._pull_plugin_step(name=args.plugin_name, args=args)
         else:
-            for name in self.config_handler.get_plugin_entries():
-                print(f'Updating {name}...')
-                try:
-                    self.plugin_puller.pull_plugin(
-                        plugin_name=name,
-                        branch_name=args.branch_name
-                    )
-                except GitCommandError as err:
-                    self.handle_error(
-                        message=f'Could not update plugin {name} :  {err}',
-                        spinner=spinner
-                    )
-        spinner.terminate()
-        print(Fore.GREEN + '\n' + 'Plugin(s) updated!')
+            for name, url in self.config_handler.get_plugin_entries():
+                args.repo_url = url
+                self._pull_plugin_step(name=name, args=args)
 
-    def _do_init(self, args: argparse.Namespace, spinner: Process):
-        for(name, url) in self.config_handler.get_plugin_entries():
-            print(f'Installing {name}...')
-            try:
-                self.plugin_puller.clone_plugin(
-                    repo_url=url,
-                    plugin_name=name,
-                    branch_name=args.branch_name
-                )
-            except GitCommandError as err:
-                self.handle_error(
-                    message=f'Could not install plugin {name} :  {err}',
-                    spinner=spinner
-                )
-        spinner.terminate()
-        print(Fore.GREEN + '\n' + 'Plugins installed!')
+        with Halo(text='Finishing up...', spinner='dots', color='blue') as spinner:
+            spinner.succeed('Updated plugins!')
+
+    def _do_init(self, args: argparse.Namespace):
+        print('Initializing plugins...')
+
+        for name, url in self.config_handler.get_plugin_entries():
+            args.repo_url = url
+            self._clone_plugin_step(name=name, args=args)
+
+        self._install_dependencies()
+
+        with Halo(text='Finishing up...', spinner='dots', color='blue') as spinner:
+            spinner.succeed('Initialized plugins!')
+
+
+def write_failure_message(message: str) -> None:
+    """ Writes message in red color for errors """
+    print(Fore.RED + '\n' + message)
+
+
+def handle_error(message: str) -> None:
+    """ Class Level Error Handling """
+    write_failure_message(message)
+    raise PluginManagementFatalException(message)

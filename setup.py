@@ -1,7 +1,7 @@
 """ Setup """
 from setuptools import setup
 setup(name='tele-forge',
-      version='1.0.0',
+      version='1.0.1',
       description='convenient cli with extendable collection of useful plugins',
       url='https://github.com/TeleTrackingTechnologies/forge',
       author='Brandon Horn, Kenneth Poling, Paul Verardi, Cameron Tucker, Clint Wadley',
@@ -14,11 +14,12 @@ setup(name='tele-forge',
           'forge._internal_plugins.manage_plugins.manage_plugins_logic'
       ],
       install_requires=[
-          'colorama',
-          'GitPython',
-          'pluginbase',
-          'requests',
-          'tabulate'
+          'colorama==0.4.4',
+          'GitPython==3.1.1',
+          'pluginbase==1.0.0',
+          'requests==2.25.0',
+          'tabulate==0.8.7',
+          'halo==0.0.31'
       ],
       classifiers=[
           'Programming Language :: Python :: 3',
