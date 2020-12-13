@@ -28,6 +28,7 @@ def register(app):
 ```
 
 ## Pre-Requisites and Virtual Environments
+
 Forge is a python package that utilizes many Python dependencies.
 
 As such, it is highly recommended that you install and use forge within a Python virtual environment to avoid any potential issues with version requirements with your existing Python packages.
@@ -39,6 +40,7 @@ If you haven't used Python before, you'll need to [install Python 3](https://doc
 In order to activate and use the included virtual environment, proceed with the following steps:
 
 ## Unix
+
 ```
 $ make init
 $ . .venv/bin/activate
@@ -48,14 +50,17 @@ You should see a visual representation on your command prompt that will indicate
 Anything installed while this virtual environment is active will only be available while you are within. Read more about Python virtual environments [here](https://realpython.com/python-virtual-environments-a-primer/).
 
 You can leave the virtual environment at any time with the following command:
+
 ```
 $ deactivate
 ```
 
 ## Installation
+
 Once within your virtual environment, there are a number of ways that you can install the forge package.
 
-### From Source
+### From Source - Unix
+
 If you are already within the repository and using the included virtual environment, you can easily run another single make command in order to install forge from source:
 
 ```
@@ -63,13 +68,39 @@ $ make install
 ```
 
 To verify your installation was successful:
+
 ```
 $ which forge
 ```
+
 should return the installed location of forge and:
+
 ```
 $ forge
 ```
+
+should return the simple help interface.
+
+### From Source - Windows
+
+If you are already within the repository and using the included virtual environment, you can easily run another single make command in order to install forge from source:
+
+```
+$ powershell .\install.ps1
+```
+
+To verify your installation was successful:
+
+```
+$ where.exe forge
+```
+
+should return the installed location of forge and:
+
+```
+$ forge
+```
+
 should return the simple help interface.
 
 ### Via PyPI
@@ -79,19 +110,21 @@ $ pip3 install tele-forge
 ```
 
 To verify your installation was successful:
+
 ```
 $ which forge
 ```
+
 should return the installed location of forge and:
+
 ```
 $ forge
 ```
+
 should return the simple help interface.
 
-
-
-
 ## Usage
+
 ```
 forge <plugin-name> [plugin-arguments]
 ```
