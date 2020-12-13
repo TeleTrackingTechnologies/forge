@@ -1,6 +1,6 @@
 IMAGE_NAME='Forge'
 VERSION=1.0.0
-PYTHON=python3.7
+PYTHON=python
 
 
 .DEFAULT: help
