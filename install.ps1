@@ -11,4 +11,5 @@ $version = (Get-Content setup.py | Select-String "version='(\d+\.\d+\.\d+)'" | S
 python -m pip install --upgrade setuptools wheel
 python setup.py sdist bdist_wheel
 python -m pip install dist/tele_forge-$version-py3-none-any.whl
+
 forge
