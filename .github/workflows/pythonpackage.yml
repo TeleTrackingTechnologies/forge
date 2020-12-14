@@ -19,10 +19,13 @@ jobs:
         include:
             - os: ubuntu-latest
               test_script: make test
+              cache_path: ~/.cache/pip
             - os: macos-latest
               test_script: make test
+              cache_path: ~/Library/Caches/pip
             - os: windows-latest
               test_script: .\test.ps1     
+              cache_path: ~\AppData\Local\pip\Cache
 
     steps:
     - uses: actions/checkout@v2
@@ -30,5 +33,11 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: ${{ matrix.python-version }}
+    - uses: actions/cache@v2
+      with:
+        path: ${{ matrix.cache_path }}
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-        
     - name: Lint with pylint and test with pytest
       run: ${{ matrix.test_script }}
