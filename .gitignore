@@ -17,5 +17,6 @@ __pycache__
 # OS generated files #
 .DS_Store
 
+coverage.xml
 .coverage
 cov_html
