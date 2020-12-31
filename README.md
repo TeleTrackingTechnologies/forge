@@ -95,5 +95,3 @@ should return the simple help interface.
 ```
 forge <plugin-name> [plugin-arguments]
 ```
-
-TODO: add other forge commands here - like update/remove etc - explain that
