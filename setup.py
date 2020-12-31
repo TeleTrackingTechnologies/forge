@@ -1,35 +1,38 @@
 """ Setup """
 from setuptools import setup
-setup(name='tele-forge',
-      version='1.0.1',
-      description='convenient cli with extendable collection of useful plugins',
-      url='https://github.com/TeleTrackingTechnologies/forge',
-      author='Brandon Horn, Kenneth Poling, Paul Verardi, Cameron Tucker, Clint Wadley',
-      author_email='opensource@teletracking.com',
-      packages=[
-          'forge',
-          'forge.config',
-          'forge._internal_plugins',
-          'forge._internal_plugins.manage_plugins',
-          'forge._internal_plugins.manage_plugins.manage_plugins_logic'
-      ],
-      install_requires=[
-          'colorama==0.4.4',
-          'GitPython==3.1.1',
-          'pluginbase==1.0.0',
-          'requests==2.25.0',
-          'tabulate==0.8.7',
-          'halo==0.0.31',
-          'python-slugify==4.0.1'
-      ],
-      classifiers=[
-          'Programming Language :: Python :: 3',
-          'License :: OSI Approved :: MIT License',
-          'Operating System :: OS Independent'
-      ],
-      python_requires='>=3.7',
-      scripts=[
-          'bin/forge',
-          'bin/forge.bat'],
-      zip_safe=False
-      )
+
+
+with open('requirements.txt') as f:
+    required_dependencies = f.read().splitlines()
+
+
+setup(
+    name='tele-forge',
+    version="2.0.0",
+    description='convenient cli with extendable collection of useful plugins',
+    url='https://github.com/TeleTrackingTechnologies/forge',
+    author=('Brandon Horn, Kenneth Poling, Paul Verardi, '
+            'Cameron Tucker, Clint Wadley, Morgan Szafranski'),
+    author_email='opensource@teletracking.com',
+    license='MIT',
+    packages=[
+        'forge'
+    ],
+    install_requires=required_dependencies,
+    classifiers=[
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'License :: OSI Approved :: MIT License',
+        'Operating System :: OS Independent'
+    ],
+    python_requires='>=3.7',
+    zip_safe=True,
+    include_package_data=True,
+    entry_points={
+        'console_scripts': [
+            'forge = forge:main'
+        ]
+    }
+)

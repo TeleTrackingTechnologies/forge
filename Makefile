@@ -1,5 +1,4 @@
 IMAGE_NAME='Forge'
-VERSION=1.0.0
 PYTHON=python
 
 
@@ -22,7 +21,7 @@ help:
 
 init:
 	rm -rf .venv
-	$(PYTHON) -m pip install virtualenv
+	pip3 install virtualenv
 	virtualenv --python=$(PYTHON) --always-copy .venv
 	( \
     . .venv/bin/activate; \
@@ -45,14 +44,14 @@ lint: dev
 build:
 	( \
 	. .venv/bin/activate; \
-	$(PYTHON) -m pip install --upgrade setuptools wheel; \
+	pip3 install --upgrade setuptools wheel; \
 	$(PYTHON) setup.py sdist bdist_wheel; \
 	)
 
 install: build
 	( \
 	. .venv/bin/activate; \
-	$(PYTHON) -m pip install dist/tele_forge-${VERSION}-py3-none-any.whl; \
+	pip3 install dist/tele_forge-${VERSION}-py3-none-any.whl; \
   	)
 
 test: lint
@@ -63,7 +62,7 @@ test: lint
 
 
 clean:
-	rm -rf forge.egg-info/ build/ dist/ .venv/ venv/
+	rm -rf forge.egg-info/ build/ dist/ .venv/ venv/ **/__pycache__/ .pytest_cache/ .coverage
 
 type-check:
 	pytype *.py forge

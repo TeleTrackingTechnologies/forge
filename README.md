@@ -1,130 +1,99 @@
-# forge
+# **forge**
 
 There are many adjunct command line utilities that have been created by many [TeleTracking](https://www.teletracking.com)
 employees to assist with their everyday activities.
 The goal of this tool is to provide an extensible command line utility that will allow
-for anyone to create new plugins for it that will be automatically pulled in by the
-base tool when placed in the proper directory.
+for anyone to create new plugins accessible
 
-In order for a plugin to be used by the utility, a simple contract must be met and a requirements.txt containing all of the packages required by the plugin must be provided at the root directory of the plugin.
-Each primary plugin file must have an execute method that accepts an array of args,
-a helptext method that returns a very basic explanation of what the module does,
-and a register method that accepts an instance of the app and passes the desired name of
-the plugin, the execute method, and the value returned from the helptext method.
+---
 
-Example as follows shows what would represent the interface to a simple echo example.
+## Pre-Requisites
 
-```
-def execute(args):
-    print(args[0])
+- Forge is a python package that utilizes many Python dependencies.
 
+- Forge and its plugins uses pipx to isolate dependencies and make self contained globally available executables.
 
-def helptext():
-    return 'echoes the provided string'
+- If you haven't used Python before, you'll need to [install Python 3](https://docs.python-guide.org/starting/installation/) first. (If you're on a Mac, avoid using the default Python installation.)
 
+- You will also need access to `git`.
 
-def register(app):
-    app.register_plugin('echo', execute, helptext())
-```
+### **Unix**
 
-## Pre-Requisites and Virtual Environments
-
-Forge is a python package that utilizes many Python dependencies.
-
-As such, it is highly recommended that you install and use forge within a Python virtual environment to avoid any potential issues with version requirements with your existing Python packages.
-
-For those not familiar with using a virtual environment, the ability to initialize a simple one is provided within the Makefile of this repository.
-
-If you haven't used Python before, you'll need to [install Python 3](https://docs.python-guide.org/starting/installation/) first. (If you're on a Mac, avoid using the default Python installation.)
-
-In order to activate and use the included virtual environment, proceed with the following steps:
-
-## Unix
-
-```
-$ make init
-$ . .venv/bin/activate
+```shell
+$ apt-get -y install python3-pip
+$ apt-get -y install python3-venv
+$ apt-get -y install git
+$ python3 -m pip install --user pipx
+$ echo 'export PIPX_HOME="$HOME/.forge"' >> ~/.profile
+$ echo 'export PIPX_BIN_DIR="$HOME/.forge/bin"' >> ~/.profile
+$ python3 -m pipx ensurepath
 ```
 
-You should see a visual representation on your command prompt that will indicate that you are within the virtual environment.
-Anything installed while this virtual environment is active will only be available while you are within. Read more about Python virtual environments [here](https://realpython.com/python-virtual-environments-a-primer/).
+> **IMPORTANT:** Now reboot/logout to gain access to `pipx`
 
-You can leave the virtual environment at any time with the following command:
+### **Windows**
 
+Go to: https://gitforwindows.org/, then download and install latest git build
+
+In PowerShell, running as administartor, run the following:
+
+```shell
+python -m pip install --user pipx
+$env:PIPX_HOME="~/.forge"
+$env:PIPX_BIN_DIR="~/.forge/bin"
+python -m pipx ensurepath --force
 ```
-$ deactivate
-```
+
+> **IMPORTANT:** Now reboot/logout to gain access to `pipx`
+
+---
 
 ## Installation
 
-Once within your virtual environment, there are a number of ways that you can install the forge package.
+### **Via PyPI**
 
-### From Source - Unix
-
-If you are already within the repository and using the included virtual environment, you can easily run another single make command in order to install forge from source:
-
-```
-$ make install
-```
-
-To verify your installation was successful:
-
-```
-$ which forge
-```
-
-should return the installed location of forge and:
-
-```
-$ forge
-```
-
-should return the simple help interface.
-
-### From Source - Windows
-
-If you are already within the repository and using the included virtual environment, you can easily run another single make command in order to install forge from source:
-
-```
-$ powershell .\install.ps1
-```
-
-To verify your installation was successful:
-
-```
-$ where.exe forge
-```
-
-should return the installed location of forge and:
-
-```
-$ forge
-```
-
-should return the simple help interface.
-
-### Via PyPI
-
-```
+```shell
 $ pip3 install tele-forge
 ```
 
-To verify your installation was successful:
+### **From VCS**
 
+```shell
+$ pipx install git+ssh://git@github.com:TeleTrackingTechnologies/forge.git
 ```
+
+### **From Source (after cloning)**
+
+```shell
+$ pipx install .
+```
+
+---
+
+## Post Install
+
+To verify your installation was successful
+
+```shell
 $ which forge
+# OR
+where.exe forge
 ```
 
-should return the installed location of forge and:
+should return the installed location of forge, then:
 
 ```
-$ forge
+$ forge -h
 ```
 
 should return the simple help interface.
+
+---
 
 ## Usage
 
 ```
 forge <plugin-name> [plugin-arguments]
 ```
+
+TODO: add other forge commands here - like update/remove etc - explain that
