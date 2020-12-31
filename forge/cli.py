@@ -1,6 +1,8 @@
 """ Forge CLI """
 
 
+from typing import List
+
 import click
 
 from forge import forge
@@ -30,7 +32,7 @@ def forge_cli(context: click.Context) -> None:
               help='Source of plugin to install',
               metavar='PLUGIN_SOURCE',
               required=True)
-def add_plugin(source: str, pipx_args) -> None:
+def add_plugin(source: str, pipx_args: List[str]) -> None:
     """ Add plugin to Forge by providing source to be passed to PIPX """
     install_to_pipx(source=source, extra_args=list(pipx_args))
 
@@ -42,7 +44,7 @@ def add_plugin(source: str, pipx_args) -> None:
                    )
 @click.argument('pipx_args', nargs=-1, type=click.UNPROCESSED)
 @click.option('-n', '--name', type=str, help='Name of plugin(s) to update', metavar='PLUGIN_NAME')
-def update_plugin(name: str, pipx_args) -> None:
+def update_plugin(name: str, pipx_args: List[str]) -> None:
     """ Update plugin(s) """
     if name:
         if not name.startswith('forge-'):
@@ -60,7 +62,7 @@ def update_plugin(name: str, pipx_args) -> None:
                    )
 @click.argument('pipx_args', nargs=-1, type=click.UNPROCESSED)
 @click.option('-n', '--name', type=str, help='Name of plugin(s) to remove', metavar='PLUGIN_NAME')
-def remove_plugin(name: str, pipx_args) -> None:
+def remove_plugin(name: str, pipx_args: List[str]) -> None:
     """ Remove plugin(s) """
     if name:
         if not name.startswith('forge-'):

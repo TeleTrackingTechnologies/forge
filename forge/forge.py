@@ -3,7 +3,7 @@
 import os
 from json import loads
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Any
 
 from tabulate import tabulate
 from halo import Halo
@@ -14,7 +14,7 @@ FORGE_PATH = os.path.join(Path.home(), '.forge')
 PLUGIN_PATH = os.path.join(FORGE_PATH, 'venvs')
 
 
-def get_plugin_paths():
+def get_plugin_paths() -> List[str]:
     """ Fet paths of installed plugins """
     paths = []
     for venv in os.listdir(PLUGIN_PATH):
@@ -22,7 +22,7 @@ def get_plugin_paths():
     return paths
 
 
-def get_pipx_config(plugin_path: str) -> Dict:
+def get_pipx_config(plugin_path: str) -> Dict[Any, Any]:
     """ Return config data from pipx venv metadata file """
     config_file_path = os.path.join(plugin_path, 'pipx_metadata.json')
     try:
@@ -49,10 +49,10 @@ def filter_forge_plugins(plugin_configs: List[Dict]) -> List[Dict]:
 
 def get_command_from_config(plugin_config: Dict) -> str:
     """ Gets the plugin command from its config """
-    return plugin_config['main_package']['apps'][0].replace('.exe', '')
+    return str(plugin_config['main_package']['apps'][0].replace('.exe', ''))
 
 
-def get_plugins():
+def get_plugins() -> List[Dict]:
     """ Get installed forge plugins """
     plugin_configs = []
     for plugin_path in get_plugin_paths():
@@ -61,7 +61,7 @@ def get_plugins():
     return filter_forge_plugins(plugin_configs=plugin_configs)
 
 
-def list_plugins():
+def list_plugins() -> None:
     """ List installed forge plugins """
     tabulated_data = [
         (get_command_from_config(config), config['main_package']['package_version'])

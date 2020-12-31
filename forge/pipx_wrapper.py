@@ -41,7 +41,7 @@ def run_command(command: List[str]) -> Tuple[str, str]:
         raise PluginManagementFatalException(err) from None
 
 
-def update_pipx(name: str, extra_args: List[str]):
+def update_pipx(name: str, extra_args: List[str]) -> None:
     """ Installs a plugin to pipx """
     command = f'pipx upgrade {name} --verbose'
     pretty_name = name.replace('forge-', '', 1)
@@ -122,6 +122,6 @@ def _extract_update_details(pipx_output: str) -> str:
     match = re.findall(r'(.*forge-.*)\(', pipx_output)
 
     if match:
-        return match[-1].strip().replace('forge-', '', 1)
+        return str(match[-1].strip().replace('forge-', '', 1))
 
     raise PluginManagementFatalException('Failed to find update information from update log!')

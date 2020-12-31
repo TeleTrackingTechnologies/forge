@@ -8,7 +8,7 @@ from forge.exceptions import (PluginManagementFatalException,
                               PluginManagementWarnException)
 
 
-def main():
+def main() -> None:
     """ Error-handled entry point for cli entry point """
     try:
         # Disable required here as context agrument is injected via a Click decorator

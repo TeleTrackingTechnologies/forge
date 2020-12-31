@@ -32,6 +32,7 @@ dev: init
 	( \
     . .venv/bin/activate; \
     pip3 install -r dev-requirements.txt; \
+	pip3 install mypy==0.790; \
     )
 
 
@@ -41,6 +42,12 @@ lint: dev
     $(PYTHON) -m pylint -j 4 -r y forge; \
     )
 
+type-check:
+	( \
+    . .venv/bin/activate; \
+    $(PYTHON) -m mypy forge; \
+    )
+
 build:
 	( \
 	. .venv/bin/activate; \
@@ -48,13 +55,7 @@ build:
 	$(PYTHON) setup.py sdist bdist_wheel; \
 	)
 
-install: build
-	( \
-	. .venv/bin/activate; \
-	pip3 install dist/tele_forge-${VERSION}-py3-none-any.whl; \
-  	)
-
-test: lint
+test: lint type-check
 	( \
     . .venv/bin/activate; \
 	$(PYTHON) -m pytest -rf -vvv -x --count 5 --cov=forge --cov-fail-under=80 --cov-report term; \
@@ -63,6 +64,3 @@ test: lint
 
 clean:
 	rm -rf forge.egg-info/ build/ dist/ .venv/ venv/ **/__pycache__/ .pytest_cache/ .coverage
-
-type-check:
-	pytype *.py forge
