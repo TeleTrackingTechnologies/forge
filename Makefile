@@ -58,7 +58,7 @@ build:
 test: lint type-check
 	( \
     . .venv/bin/activate; \
-	$(PYTHON) -m pytest -rf -vvv -x --count 5 --cov=forge --cov-fail-under=80 --cov-report term; \
+	$(PYTHON) -m pytest -rf -vvv -x --count 5 --cov=forge --cov-fail-under=80 --cov-report term-missing; \
     )
 
 

@@ -54,7 +54,7 @@ def test_update_pipx_fail_no_update_message_matched(mock_run_command, mock_spinn
     with pytest.raises(PluginManagementFatalException):
         pipx_wrapper.update_pipx('forge-plugin-name', [])
 
-    assert mock_spinner.mock_calls[2] == call().__enter__().fail('Failed to find update information from update log!')
+    assert mock_spinner.mock_calls[2] == call().__enter__().fail('Something went wrong!\nFailed to find update information from update log!')
 
 
 @patch('forge.pipx_wrapper.Halo')
@@ -104,7 +104,7 @@ def test_install_pipx_fail_no_install_message_matched(mock_run_command, mock_spi
     with pytest.raises(PluginManagementFatalException):
         pipx_wrapper.install_to_pipx('forge-plugin-name', [])
 
-    assert mock_spinner.mock_calls[2] == call().__enter__().fail('Failed to find package information install log!')
+    assert mock_spinner.mock_calls[2] == call().__enter__().fail('Something went wrong!\nFailed to find package information install log!')
 
 
 @patch('forge.pipx_wrapper.Halo')
@@ -136,5 +136,5 @@ def test_uninstall_from_pipx_fail_some_pipx_exception(mock_popen, mock_spinner):
         pipx_wrapper.uninstall_from_pipx('forge-plugin-name', [])
 
     assert mock_spinner.mock_calls[2] == call().__enter__().fail(
-        "Command 'pipx uninstall forge-plugin-name --verbose' returned non-zero exit status 1."
+        "Something went wrong!\nCommand 'pipx uninstall forge-plugin-name --verbose' returned non-zero exit status 1."
     )

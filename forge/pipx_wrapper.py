@@ -32,7 +32,7 @@ def run_command(command: List[str]) -> Tuple[str, str]:
 
         stdout, stderr = process.communicate()
 
-        if process.returncode:
+        if process.returncode and '(_symlink_package_apps:95): Same path' not in stderr.decode():
             raise PluginManagementFatalException(stderr.decode())
 
         return stdout.decode(), stderr.decode()
@@ -59,7 +59,7 @@ def update_pipx(name: str, extra_args: List[str]) -> None:
             spinner.succeed(update_message)
 
         except PluginManagementFatalException as err:
-            spinner.fail(str(err))
+            spinner.fail(f'Something went wrong!\n{str(err)}')
             raise PluginManagementFatalException from None
 
 
@@ -80,7 +80,7 @@ def install_to_pipx(source: str, extra_args: List[str]) -> None:
             spinner.succeed(f'Installed plugin: [{plugin_name}] [{package}] [{python_version}]!')
 
         except PluginManagementFatalException as err:
-            spinner.fail(str(err))
+            spinner.fail(f'Something went wrong!\n{str(err)}')
             raise PluginManagementFatalException from None
 
 
@@ -101,7 +101,7 @@ def uninstall_from_pipx(plugin_name: str, extra_args: List[str]) -> str:
             return plugin_name
 
         except PluginManagementFatalException as err:
-            spinner.fail(str(err))
+            spinner.fail(f'Something went wrong!\n{str(err)}')
             raise PluginManagementFatalException from None
 
 
