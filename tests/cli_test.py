@@ -151,7 +151,7 @@ def test_cli_help_forge(mock_echo):
     assert str(mock_echo.mock_calls[0].args[0]).split('\n')[0] == 'Usage: forge [OPTIONS] COMMAND [ARGS]...'
 
 
-@patch('forge.cli.get_forge_plugin_command_names')
+@patch('forge.forge.get_forge_plugin_command_names')
 @patch('click.echo')
 def test_cli_help_forge_core_command(mock_echo, mock_command_names):
 
@@ -175,7 +175,7 @@ def test_run_forge_plugin(mock_echo, mock_popen):
     assert mock_echo.mock_calls == [call('stdout'), call('stderr')]
 
 
-@patch('forge.cli.get_forge_plugin_command_names', return_value=['plugin1'])
+@patch('forge.forge.get_forge_plugin_command_names', return_value=['plugin1'])
 @patch('forge.cli.run_forge_plugin')
 def test_cli_help_forge_plugin_command(mock_run_forge_plugin, mock_command_names):
 

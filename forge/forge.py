@@ -22,6 +22,14 @@ def get_plugin_paths() -> List[str]:
     return paths
 
 
+def get_forge_plugin_command_names() -> List[str]:
+    """ Returns a list of plugin command names"""
+    return [
+        get_command_from_config(plugin_config)
+        for plugin_config in get_plugins()
+    ]
+
+
 def get_pipx_config(plugin_path: str) -> Dict[Any, Any]:
     """ Return config data from pipx venv metadata file """
     config_file_path = os.path.join(plugin_path, 'pipx_metadata.json')

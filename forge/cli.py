@@ -28,7 +28,7 @@ def print_cmd_help(ctx: click.Context, param, value) -> None:  # type: ignore # 
         help_names = cmd.get_help_option_names(ctx)
 
         if (set(args) & help_names) and name not in ('list', 'update', 'remove'):
-            if name in get_forge_plugin_command_names():
+            if name in forge.get_forge_plugin_command_names():
                 run_forge_plugin([name, '-h'])
             else:
                 cmd_ctx = click.Context(cmd, info_name=cmd.name, parent=ctx)
@@ -125,15 +125,7 @@ def bind_plugin_command(plugin_name: str) -> None:
         run_forge_plugin([sys.argv[1]] + args)
 
 
-def get_forge_plugin_command_names() -> List[str]:
-    """ Returns a list of plugin command names"""
-    return [
-        forge.get_command_from_config(plugin_config)
-        for plugin_config in forge.get_plugins()
-    ]
-
-
 def inject_forge_plugins() -> None:
     """ Inject all plugin command names into the click CLI """
-    for command in get_forge_plugin_command_names():
+    for command in forge.get_forge_plugin_command_names():
         bind_plugin_command(plugin_name=command)
