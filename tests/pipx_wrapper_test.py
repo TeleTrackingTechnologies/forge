@@ -138,3 +138,24 @@ def test_uninstall_from_pipx_fail_some_pipx_exception(mock_popen, mock_spinner):
     assert mock_spinner.mock_calls[2] == call().__enter__().fail(
         "Something went wrong!\nCommand 'pipx uninstall forge-plugin-name --verbose' returned non-zero exit status 1."
     )
+
+
+@pytest.mark.parametrize("error_message,expected_result", [
+    ("""
+        yada
+        (_symlink_package_apps:95): Same path
+        yada
+    """, False),
+    ("""
+        yada
+        (_copy_package_apps:66):   Overwriting file
+        yada
+    """, False),
+    ("""
+        yada
+        some none error log message
+        yada
+    """, True)
+])
+def test_determine_is_fatal_error(error_message, expected_result):
+    assert pipx_wrapper.determine_is_fatal_error(error_message) == expected_result
