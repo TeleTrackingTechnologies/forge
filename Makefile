@@ -1,6 +1,5 @@
 IMAGE_NAME='Forge'
-VERSION=1.0.0
-PYTHON=python3.7
+PYTHON=python
 
 
 .DEFAULT: help
@@ -22,35 +21,46 @@ help:
 
 init:
 	rm -rf .venv
-	$(PYTHON) -m pip install virtualenv
+	pip3 install virtualenv
 	virtualenv --python=$(PYTHON) --always-copy .venv
 	( \
     . .venv/bin/activate; \
     pip3 install -r requirements.txt; \
     )
 
-lint:
+dev: init
 	( \
     . .venv/bin/activate; \
-    pylint -j 4 --rcfile=pylintrc forge; \
+    pip3 install -r dev-requirements.txt; \
+	pip3 install mypy==0.790; \
+    )
+
+
+lint: dev
+	( \
+    . .venv/bin/activate; \
+    $(PYTHON) -m pylint -j 4 -r y forge; \
+    )
+
+type-check:
+	( \
+    . .venv/bin/activate; \
+    $(PYTHON) -m mypy forge; \
     )
 
 build:
 	( \
-	$(PYTHON) -m pip install --upgrade setuptools wheel; \
+	. .venv/bin/activate; \
+	pip3 install --upgrade setuptools wheel; \
 	$(PYTHON) setup.py sdist bdist_wheel; \
 	)
 
-install: build
+test: lint type-check
 	( \
-	  $(PYTHON) -m pip install dist/tele_forge-${VERSION}-py3-none-any.whl; \
-  )
+    . .venv/bin/activate; \
+	$(PYTHON) -m pytest -rf -vvv -x --count 5 --cov=forge --cov-fail-under=80 --cov-report term-missing; \
+    )
 
-test:
-	$(PYTHON) -m unittest discover -s forge -p '*_test.py'
 
 clean:
-	rm -rf forge.egg-info/ build/ dist/ .venv/
-
-type-check:
-	pytype *.py forge
+	rm -rf forge.egg-info/ build/ dist/ .venv/ venv/ **/__pycache__/ .pytest_cache/ .coverage
