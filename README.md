@@ -53,7 +53,7 @@ python -m pipx ensurepath --force
 ### **Via PyPI**
 
 ```shell
-$ pip3 install tele-forge
+$ pipx install tele-forge
 ```
 
 ### **From VCS**
@@ -66,6 +66,8 @@ $ pipx install git+ssh://git@github.com:TeleTrackingTechnologies/forge.git
 
 ```shell
 $ pipx install .
+# OR as editable for developing forge changes
+$ pipx install -e .
 ```
 
 ---
