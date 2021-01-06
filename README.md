@@ -59,7 +59,7 @@ $ pipx install tele-forge
 ### **From VCS**
 
 ```shell
-$ pipx install git+ssh://git@github.com:TeleTrackingTechnologies/forge.git
+$ pipx install git+https://git@github.com/TeleTrackingTechnologies/forge
 ```
 
 ### **From Source (after cloning)**
