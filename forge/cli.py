@@ -1,7 +1,7 @@
 """ Forge CLI """
 
 from typing import List
-from subprocess import PIPE, Popen
+from subprocess import Popen
 import sys
 import click
 
@@ -100,7 +100,7 @@ def list_forge_plugins() -> None:
 
 def run_forge_plugin(command: List[str]) -> None:
     """ Forge Plugin """
-    process = Popen(command, stdout=PIPE, stderr=PIPE)
+    process = Popen(command)
 
     stdout, stderr = process.communicate()
     if stdout:
