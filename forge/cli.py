@@ -1,13 +1,12 @@
 """ Forge CLI """
 
-import sys
-from subprocess import Popen
 from typing import List
-
+from subprocess import Popen
+import sys
 import click
-import pkg_resources
 
 from forge import forge
+import pkg_resources
 
 from .pipx_wrapper import install_to_pipx, uninstall_from_pipx, update_pipx
 
