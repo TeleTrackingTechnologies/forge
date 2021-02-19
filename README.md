@@ -29,6 +29,8 @@ $ echo 'export PIPX_BIN_DIR="$HOME/.forge/bin"' >> ~/.profile
 $ python3 -m pipx ensurepath
 ```
 
+> **Are you a ZSH User?** Zsh doesn't source `~/.profile`, use `~/.zprofile` instead
+
 > **IMPORTANT:** Now reboot/logout to gain access to `pipx`
 
 ### **Windows**
@@ -39,8 +41,8 @@ In PowerShell, running as administartor, run the following:
 
 ```shell
 python -m pip install --user pipx
-$env:PIPX_HOME="~/.forge"
-$env:PIPX_BIN_DIR="~/.forge/bin"
+setx /m PIPX_HOME "~/.forge"
+setx /m PIPX_BIN_DIR "~/.forge/bin"
 python -m pipx ensurepath --force
 ```
 
@@ -78,17 +80,27 @@ To verify your installation was successful
 
 ```shell
 $ which forge
+#/home/USERNAME/.forge/bin/forge
 # OR
 where.exe forge
+#C:\Users\USERNAME\.forge\bin\forge.exe
 ```
 
-should return the installed location of forge, then:
+Then, to see the help interface:
 
 ```
 $ forge -h
 ```
 
-should return the simple help interface.
+---
+
+## Adding plugins
+
+```
+forge add -s SOURCE
+forge add -s git+ssh://git@REPO_LINK
+...
+```
 
 ---
 
@@ -97,3 +109,31 @@ should return the simple help interface.
 ```
 forge <plugin-name> [plugin-arguments]
 ```
+
+---
+
+## Want to contribute to forge?
+
+Fork this repo, then be sure to read our `CONTRIBUTING.md`
+
+To install a specific branch/commit (suppose you've forked this repo, made changes and want to test your work):
+
+```shell
+pipx install git+https://github.com/GIT_USERNAME/forge@YOUR_BRANCH_NAME --force
+pipx install git+https://github.com/GIT_USERNAME/forge@COMMIT_LONG_HASH_HERE --force
+```
+
+This is good way to share your work with others to test changes.
+
+You can also use `pipx` to live edit locally:
+
+- cd to a locally cloned version of forge
+- `pipx install -e . --force`
+
+This will install the local forge repo, any change you make in the repo will be reflected in the next run without having to update or reinstall
+
+To revert back to the mainstream branch you will need to uninstall your local plugin first with either:
+
+`pipx uninstall .`
+
+Then follow the above section's install instructions. (`pipx install tele-forge`)
