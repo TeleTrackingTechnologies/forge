@@ -120,7 +120,7 @@ def bind_plugin_command(plugin_name: str) -> None:
                            allow_extra_args=True
                        ))  # pylint: disable=unused-variable
     def command() -> None:
-        """ Plugin Entrypoint"""
+        """ Plugin Entrypoint """
         args = sys.argv[2:] if len(sys.argv) > 2 else []
         run_forge_plugin([sys.argv[1]] + args)
 
