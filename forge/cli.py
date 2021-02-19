@@ -1,9 +1,11 @@
 """ Forge CLI """
 
-from typing import List
-from subprocess import Popen
 import sys
+from subprocess import Popen
+from typing import List
+
 import click
+import pkg_resources
 
 from forge import forge
 
@@ -43,6 +45,7 @@ def print_cmd_help(ctx: click.Context, param, value) -> None:  # type: ignore # 
     callback=print_cmd_help,
     is_flag=True
 )
+@click.version_option(pkg_resources.require("tele-forge")[0].version)
 def forge_cli(help: str) -> None:  # pylint: disable=redefined-builtin, unused-argument
     """ Command Line Interface for Forge """
     if click.get_current_context().invoked_subcommand is None:
