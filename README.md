@@ -31,7 +31,7 @@ $ python3 -m pipx ensurepath
 
 > **Are you a ZSH User?** Zsh doesn't source `~/.profile`, use `~/.zprofile` instead
 
-> **IMPORTANT:** Now reboot/logout to gain access to `pipx`
+> **IMPORTANT:** Now reboot/logout to gain access to `pipx` globally
 
 ### **Windows**
 
@@ -46,11 +46,15 @@ setx /m PIPX_BIN_DIR "~/.forge/bin"
 python -m pipx ensurepath --force
 ```
 
-> **IMPORTANT:** Now reboot/logout to gain access to `pipx`
+> **IMPORTANT:** Now reboot/logout to gain access to `pipx` globally
 
 ---
 
 ## Installation
+
+> **NOTE:** Befrore moving on make sure the envirnonment variables are set, open a new terminal and run
+
+> `echo $PIPX_HOME` or `$env:PIPX_HOME`
 
 ### **Via PyPI**
 
@@ -137,3 +141,15 @@ To revert back to the mainstream branch you will need to uninstall your local pl
 `pipx uninstall .`
 
 Then follow the above section's install instructions. (`pipx install tele-forge`)
+
+---
+
+## Migrating from Forge 1.0?
+
+We need to get rid of some things before trying to install Forge 2.0+
+
+1. `pip uninstall tele-forge`
+2. See the Post Install step above for the where/which commands
+3. Delete the forge binary from step 2
+4. Re run the where/which commands and ensure forge doesn't exist on your PATH
+5. You're ready to install Forge 2.0+ using the above installation guide!
