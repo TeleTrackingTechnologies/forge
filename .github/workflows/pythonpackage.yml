@@ -10,7 +10,8 @@ on:
 
 jobs:
   build:
-
+    env:
+      TOX_PARALLEL_NO_SPINNER: 1
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -39,4 +40,4 @@ jobs:
     - name: Install tox
       run: pip install -U tox
     - name: Lint, Test, Type Check, Bandit, and Safety
-      run: TOX_PARALLEL_NO_SPINNER=1 tox -e lint,test,bandit,type-check,safety -p
+      run: tox -e lint,test,bandit,type-check,safety -p
