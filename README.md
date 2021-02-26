@@ -52,7 +52,7 @@ python -m pipx ensurepath --force
 
 ## Installation
 
-> **NOTE:** Befrore moving on make sure the envirnonment variables are set, open a new terminal and run
+> **NOTE:** Before moving on make sure the envirnonment variables are set, open a new terminal and run
 
 > `echo $PIPX_HOME` or `$env:PIPX_HOME`
 

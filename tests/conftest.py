@@ -1,4 +1,5 @@
-from mock import mock_open
+import pytest
+from mock import mock_open, patch
 
 # Credit to: https://gist.github.com/adammartinez271828/137ae25d0b817da2509c1a96ba37fc56
 
@@ -17,3 +18,33 @@ def multi_mock_open(*file_contents):
     mock_opener.side_effect = mock_files
 
     return mock_opener
+
+
+@pytest.fixture()
+def mock_echo():
+    with patch('click.echo') as mock:
+        yield mock
+
+
+@pytest.fixture()
+def mock_listdir():
+    with patch('os.listdir') as mock:
+        yield mock
+
+
+@pytest.fixture()
+def mock_tabulate():
+    with patch('tabulate.tabulate') as mock:
+        yield mock
+
+
+@pytest.fixture()
+def mock_popen():
+    with patch('subprocess.Popen') as mock:
+        yield mock
+
+
+@pytest.fixture()
+def mock_spinner():
+    with patch('halo.Halo') as mock:
+        yield mock

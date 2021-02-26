@@ -2,15 +2,13 @@ import os
 
 import pytest
 from forge import forge
-from forge.exceptions import (PluginManagementFatalException,
-                              PluginManagementWarnException)
 from mock import call, mock_open, patch
 
-from .conftest import multi_mock_open
+from tests.conftest import multi_mock_open
 
 
-@patch('os.listdir', return_value=['plugin1', 'plugin2'])
-def test_get_plugin_paths(mocked_listdir):
+def test_get_plugin_paths(mock_listdir):
+    mock_listdir.return_value = ['plugin1', 'plugin2']
 
     forge.PLUGIN_PATH = os.path.join('home', 'user', '.forge', 'venvs')
 
@@ -27,7 +25,6 @@ def test_get_plugin_paths(mocked_listdir):
 
 
 def test_get_pipx_config():
-
     fake_config_json = '{"a":"something", "b":"another"}'
 
     with patch("builtins.open", mock_open(read_data=fake_config_json)):
@@ -74,7 +71,6 @@ def test_filer_forge_plugins():
 
 
 def test_get_command_from_config():
-
     mock_plugin_config = {
         'main_package': {
             'apps': [
@@ -85,8 +81,9 @@ def test_get_command_from_config():
     assert forge.get_command_from_config(mock_plugin_config) == 'plugin-name'
 
 
-@patch('os.listdir', return_value=['forge-plugin1', 'forge-plugin2', 'non_plugin'])
-def test_get_plugins(mocked_listdir):
+def test_get_plugins(mock_listdir):
+    mock_listdir.return_value = ['forge-plugin1', 'forge-plugin2', 'non_plugin']
+
     forge.PLUGIN_PATH = os.path.join('home', 'user', '.forge', 'venvs')
 
     fake_config_jsons = [
@@ -106,10 +103,9 @@ def test_get_plugins(mocked_listdir):
     assert filtered_plugin_configs == expected_plugin_configs
 
 
-@patch('forge.forge.Halo')
-@patch('forge.forge.tabulate')
-@patch('os.listdir', return_value=['forge-plugin1', 'forge-plugin2', 'non_plugin'])
-def test_list_plugins(mocked_listdir, mocked_tabulate, mocked_spinner):
+def test_list_plugins(mock_listdir, mock_tabulate, mock_spinner):
+    mock_listdir.return_value = ['forge-plugin1', 'forge-plugin2', 'non_plugin']
+
     forge.PLUGIN_PATH = os.path.join('home', 'user', '.forge', 'venvs')
 
     fake_config_jsons = [
@@ -121,17 +117,14 @@ def test_list_plugins(mocked_listdir, mocked_tabulate, mocked_spinner):
     with patch("builtins.open", multi_mock_open(*fake_config_jsons)):
         forge.list_plugins()
 
-    mocked_tabulate.assert_called_once_with(
+    mock_tabulate.assert_called_once_with(
         [('plugin1', '1.0.0'), ('plugin2', '0.0.1')], ['plugin', 'version']
     )
 
-    mocked_spinner.assert_not_called()
+    mock_spinner.assert_not_called()
 
 
-@patch('forge.forge.Halo')
-@patch('forge.forge.tabulate')
-@patch('os.listdir')
-def test_list_plugins_no_plugins_installed(mocked_listdir, mocked_tabulate, mocked_spinner):
+def test_list_plugins_no_plugins_installed(mock_listdir, mock_tabulate, mock_spinner):
     forge.PLUGIN_PATH = os.path.join('home', 'user', '.forge', 'venvs')
 
     fake_config_jsons = []
@@ -139,5 +132,8 @@ def test_list_plugins_no_plugins_installed(mocked_listdir, mocked_tabulate, mock
     with patch("builtins.open", multi_mock_open(*fake_config_jsons)):
         forge.list_plugins()
 
-    mocked_tabulate.assert_not_called()
-    assert mocked_spinner.mock_calls[1] == call().warn('No forge plugins installed yet! - Run forge --help for help')
+    mock_tabulate.assert_not_called()
+
+    mock_spinner.assert_has_calls([
+        call().warn('No forge plugins installed yet! - Run forge --help for help')
+    ], any_order=True)

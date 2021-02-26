@@ -18,13 +18,10 @@ jobs:
         python-version: [3.7, 3.8, 3.9]
         include:
             - os: ubuntu-latest
-              test_script: make test
               cache_path: ~/.cache/pip
             - os: macos-latest
-              test_script: make test
               cache_path: ~/Library/Caches/pip
             - os: windows-latest
-              test_script: .\test.ps1     
               cache_path: ~\AppData\Local\pip\Cache
 
     steps:
@@ -38,6 +35,8 @@ jobs:
         path: ${{ matrix.cache_path }}
         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
         restore-keys: |
-          ${{ runner.os }}-pip-        
-    - name: Lint with pylint and test with pytest
-      run: ${{ matrix.test_script }}
+          ${{ runner.os }}-pip-
+    - name: Install tox
+      run: pip install -U tox
+    - name: Lint, Test, Type Check, Bandit, and Safety
+      run: tox -e lint,test,bandit,type-check,safety -p

@@ -1,14 +1,15 @@
 """ Forge CLI """
 
-from typing import List
-from subprocess import Popen
 import sys
+import subprocess
+from typing import List
+
 import click
 import pkg_resources
 
 from forge import forge
-
-from .pipx_wrapper import install_to_pipx, uninstall_from_pipx, update_pipx
+from forge.pipx_wrapper import (install_to_pipx, uninstall_from_pipx,
+                                update_pipx)
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'],
                         ignore_unknown_options=True,
@@ -102,7 +103,7 @@ def list_forge_plugins() -> None:
 
 def run_forge_plugin(command: List[str]) -> None:
     """ Forge Plugin """
-    process = Popen(command)
+    process = subprocess.Popen(command)
 
     stdout, stderr = process.communicate()
     if stdout:
