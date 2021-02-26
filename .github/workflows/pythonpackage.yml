@@ -39,4 +39,4 @@ jobs:
     - name: Install tox
       run: pip install -U tox
     - name: Lint, Test, Type Check, Bandit, and Safety
-      run: tox -e lint,test,bandit,type-check,safety -p
+      run: TOX_PARALLEL_NO_SPINNER=1 tox -e lint,test,bandit,type-check,safety -p
