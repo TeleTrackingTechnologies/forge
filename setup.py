@@ -8,7 +8,7 @@ with open('requirements.txt') as f:
 
 setup(
     name='tele-forge',
-    version="2.0.0",
+    version="2.0.1",
     description='convenient cli with extendable collection of useful plugins',
     url='https://github.com/TeleTrackingTechnologies/forge',
     author=('Brandon Horn, Kenneth Poling, Paul Verardi, '

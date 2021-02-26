@@ -4,6 +4,7 @@ from typing import List
 from subprocess import Popen
 import sys
 import click
+import pkg_resources
 
 from forge import forge
 
@@ -43,6 +44,7 @@ def print_cmd_help(ctx: click.Context, param, value) -> None:  # type: ignore # 
     callback=print_cmd_help,
     is_flag=True
 )
+@click.version_option(pkg_resources.require("tele-forge")[0].version)
 def forge_cli(help: str) -> None:  # pylint: disable=redefined-builtin, unused-argument
     """ Command Line Interface for Forge """
     if click.get_current_context().invoked_subcommand is None:
@@ -120,7 +122,7 @@ def bind_plugin_command(plugin_name: str) -> None:
                            allow_extra_args=True
                        ))  # pylint: disable=unused-variable
     def command() -> None:
-        """ Plugin Entrypoint"""
+        """ Plugin Entrypoint """
         args = sys.argv[2:] if len(sys.argv) > 2 else []
         run_forge_plugin([sys.argv[1]] + args)
 

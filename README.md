@@ -29,7 +29,9 @@ $ echo 'export PIPX_BIN_DIR="$HOME/.forge/bin"' >> ~/.profile
 $ python3 -m pipx ensurepath
 ```
 
-> **IMPORTANT:** Now reboot/logout to gain access to `pipx`
+> **Are you a ZSH User?** Zsh doesn't source `~/.profile`, use `~/.zprofile` instead
+
+> **IMPORTANT:** Now reboot/logout to gain access to `pipx` globally
 
 ### **Windows**
 
@@ -39,16 +41,20 @@ In PowerShell, running as administartor, run the following:
 
 ```shell
 python -m pip install --user pipx
-$env:PIPX_HOME="~/.forge"
-$env:PIPX_BIN_DIR="~/.forge/bin"
+setx /m PIPX_HOME "~/.forge"
+setx /m PIPX_BIN_DIR "~/.forge/bin"
 python -m pipx ensurepath --force
 ```
 
-> **IMPORTANT:** Now reboot/logout to gain access to `pipx`
+> **IMPORTANT:** Now reboot/logout to gain access to `pipx` globally
 
 ---
 
 ## Installation
+
+> **NOTE:** Befrore moving on make sure the envirnonment variables are set, open a new terminal and run
+
+> `echo $PIPX_HOME` or `$env:PIPX_HOME`
 
 ### **Via PyPI**
 
@@ -78,17 +84,27 @@ To verify your installation was successful
 
 ```shell
 $ which forge
+#/home/USERNAME/.forge/bin/forge
 # OR
 where.exe forge
+#C:\Users\USERNAME\.forge\bin\forge.exe
 ```
 
-should return the installed location of forge, then:
+Then, to see the help interface:
 
 ```
 $ forge -h
 ```
 
-should return the simple help interface.
+---
+
+## Adding plugins
+
+```
+forge add -s SOURCE
+forge add -s git+ssh://git@REPO_LINK
+...
+```
 
 ---
 
@@ -97,3 +113,43 @@ should return the simple help interface.
 ```
 forge <plugin-name> [plugin-arguments]
 ```
+
+---
+
+## Want to contribute to forge?
+
+Fork this repo, then be sure to read our `CONTRIBUTING.md`
+
+To install a specific branch/commit (suppose you've forked this repo, made changes and want to test your work):
+
+```shell
+pipx install git+https://github.com/GIT_USERNAME/forge@YOUR_BRANCH_NAME --force
+pipx install git+https://github.com/GIT_USERNAME/forge@COMMIT_LONG_HASH_HERE --force
+```
+
+This is good way to share your work with others to test changes.
+
+You can also use `pipx` to live edit locally:
+
+- cd to a locally cloned version of forge
+- `pipx install -e . --force`
+
+This will install the local forge repo, any change you make in the repo will be reflected in the next run without having to update or reinstall
+
+To revert back to the mainstream branch you will need to uninstall your local plugin first with either:
+
+`pipx uninstall .`
+
+Then follow the above section's install instructions. (`pipx install tele-forge`)
+
+---
+
+## Migrating from Forge 1.0?
+
+We need to get rid of some things before trying to install Forge 2.0+
+
+1. `pip uninstall tele-forge`
+2. See the Post Install step above for the where/which commands
+3. Delete the forge binary from step 2
+4. Re run the where/which commands and ensure forge doesn't exist on your PATH
+5. You're ready to install Forge 2.0+ using the above installation guide!
