@@ -3,12 +3,12 @@
 import os
 from json import loads
 from pathlib import Path
-from typing import Dict, List, Any
+from typing import Any, Dict, List
 
-from tabulate import tabulate
-from halo import Halo
+import tabulate
+import halo
 
-from .exceptions import PluginManagementFatalException
+from forge.exceptions import PluginManagementFatalException
 
 FORGE_PATH = os.path.join(Path.home(), '.forge')
 PLUGIN_PATH = os.path.join(FORGE_PATH, 'venvs')
@@ -76,6 +76,6 @@ def list_plugins() -> None:
         for config in get_plugins()]
 
     if len(tabulated_data) == 0:
-        Halo().warn('No forge plugins installed yet! - Run forge --help for help')
+        halo.Halo().warn('No forge plugins installed yet! - Run forge --help for help')
     else:
-        print(tabulate(tabulated_data, ['plugin', 'version']), end='\n\n')
+        print(tabulate.tabulate(tabulated_data, ['plugin', 'version']), end='\n\n')

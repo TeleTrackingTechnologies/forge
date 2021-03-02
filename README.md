@@ -19,10 +19,23 @@ for anyone to create new plugins accessible
 
 ### **Unix**
 
+#### Dependencies
+
 ```shell
+# MacOS
+$ brew install python3-pip
+$ brew install python3-venv
+$ brew install git
+
+# Other Linux distros
 $ apt-get -y install python3-pip
 $ apt-get -y install python3-venv
 $ apt-get -y install git
+```
+
+#### Install PIPX
+
+```shell
 $ python3 -m pip install --user pipx
 $ echo 'export PIPX_HOME="$HOME/.forge"' >> ~/.profile
 $ echo 'export PIPX_BIN_DIR="$HOME/.forge/bin"' >> ~/.profile
@@ -52,7 +65,7 @@ python -m pipx ensurepath --force
 
 ## Installation
 
-> **NOTE:** Befrore moving on make sure the envirnonment variables are set, open a new terminal and run
+> **NOTE:** Before moving on make sure the envirnonment variables are set, open a new terminal and run
 
 > `echo $PIPX_HOME` or `$env:PIPX_HOME`
 

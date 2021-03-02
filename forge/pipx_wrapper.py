@@ -2,13 +2,13 @@
 
 
 import re
-from subprocess import PIPE, CalledProcessError, Popen
+import subprocess
 from typing import List, Tuple
 
-from halo import Halo
+import halo
 
-from .exceptions import (PluginManagementFatalException,
-                         PluginManagementWarnException)
+from forge.exceptions import (PluginManagementFatalException,
+                              PluginManagementWarnException)
 
 DOTS = {
     "interval": 80,
@@ -16,9 +16,9 @@ DOTS = {
 }
 
 
-def make_spinner(text: str) -> Halo:
+def make_spinner(text: str) -> halo.Halo:
     """ Creates uniform stylized Halo spinner """
-    return Halo(
+    return halo.Halo(
         text=text,
         spinner=DOTS,
         color='blue'
@@ -42,7 +42,7 @@ def determine_is_fatal_error(current_error_message: str) -> bool:
 def run_command(command: List[str]) -> Tuple[str, str]:
     """ Wrapper to simplify handling subprocess commands """
     try:
-        process = Popen(command, stdout=PIPE, stderr=PIPE)
+        process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         stdout, stderr = process.communicate()
 
@@ -51,7 +51,7 @@ def run_command(command: List[str]) -> Tuple[str, str]:
 
         return stdout.decode(), stderr.decode()
 
-    except CalledProcessError as err:
+    except subprocess.CalledProcessError as err:
         raise PluginManagementFatalException(err) from None
 
 
