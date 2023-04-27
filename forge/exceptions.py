@@ -6,4 +6,4 @@ class PluginManagementFatalException(Exception):
 
 
 class PluginManagementWarnException(Exception):
-    """  Exception clas for raising during warning issues """
+    """  Exception class for raising during warning issues """
