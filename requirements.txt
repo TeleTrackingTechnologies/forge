@@ -1,4 +1,4 @@
-requests==2.25.0
+requests==2.31.0
 tabulate==0.8.7
 halo==0.0.31
 python-slugify==4.0.1
